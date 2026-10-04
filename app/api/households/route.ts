@@ -29,15 +29,20 @@ export async function POST(req: Request) {
   if (typeof nama !== "string" || nama.trim() === "") {
     return NextResponse.json({ error: "Nama rumah wajib" }, { status: 400 });
   }
-  const { data: rumah, error: hErr } = await supabase
+  const id = crypto.randomUUID();
+  const { error: hErr } = await supabase
     .from("households")
-    .insert({ nama: nama.trim(), created_by: user.id })
-    .select()
-    .single();
-  if (hErr || !rumah) return NextResponse.json({ error: "Gagal buat rumah" }, { status: 400 });
+    .insert({ id, nama: nama.trim(), created_by: user.id });
+  if (hErr) return NextResponse.json({ error: "Gagal buat rumah" }, { status: 400 });
   const { error: mErr } = await supabase
     .from("memberships")
-    .insert({ user_id: user.id, household_id: rumah.id, role: "admin" });
+    .insert({ user_id: user.id, household_id: id, role: "admin" });
   if (mErr) return NextResponse.json({ error: "Gagal buat rumah" }, { status: 500 });
+  const { data: rumah, error: rErr } = await supabase
+    .from("households")
+    .select()
+    .eq("id", id)
+    .single();
+  if (rErr || !rumah) return NextResponse.json({ error: "Gagal buat rumah" }, { status: 500 });
   return NextResponse.json(rumah);
 }
