@@ -1,5 +1,5 @@
-/* Minimal service worker shell: cache-first app shell, network-first navigations. */
-const CACHE = "rumi-v1";
+/* Minimal service worker shell: network-first app shell + navigations, cache fallback. */
+const CACHE = "rumi-v2";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -35,14 +35,12 @@ self.addEventListener("fetch", (event) => {
     return;
   }
   event.respondWith(
-    caches.match(request).then(
-      (hit) =>
-        hit ||
-        fetch(request).then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE).then((cache) => cache.put(request, copy)).catch(() => {});
-          return res;
-        })
-    )
+    fetch(request)
+      .then((res) => {
+        const copy = res.clone();
+        caches.open(CACHE).then((cache) => cache.put(request, copy)).catch(() => {});
+        return res;
+      })
+      .catch(() => caches.match(request))
   );
 });

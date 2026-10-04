@@ -13,10 +13,18 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
   useEffect(() => {
     let batal = false;
+    let retryUsed = false;
     (async () => {
       setGagal(false);
       try {
-        const [resMe, resHs] = await Promise.all([fetch("/api/me"), fetch("/api/households")]);
+        let resMe, resHs;
+        [resMe, resHs] = await Promise.all([fetch("/api/me"), fetch("/api/households")]);
+        // cookie may not be synced yet (SSR sync or fresh login): retry once
+        if ((resMe.status === 401 || resHs.status === 401) && !retryUsed && !batal) {
+          retryUsed = true;
+          await new Promise((r) => setTimeout(r, 300));
+          [resMe, resHs] = await Promise.all([fetch("/api/me"), fetch("/api/households")]);
+        }
         if (resMe.status === 401 || resHs.status === 401) {
           if (!batal) router.replace("/login");
           return;
@@ -37,6 +45,17 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       batal = true;
     };
   }, [ulangi, router]);
+
+  // refetch after navigation (login redirect, household switch) so fresh session is picked up
+  useEffect(() => {
+    const onRouteChange = () => {
+      setGagal(false);
+      setUlangi((n) => n + 1);
+    };
+    const events = (router as any)?.events;
+    events?.on?.("routeChangeComplete", onRouteChange);
+    return () => events?.off?.("routeChangeComplete", onRouteChange);
+  }, [router]);
 
   if (gagal) {
     return (
