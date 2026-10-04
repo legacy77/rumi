@@ -1,9 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import BottomNav from "@/components/BottomNav";
 import { HouseholdProvider } from "@/lib/household-context";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const [aktif, setAktif] = useState<any>(undefined);
   const [userId, setUserId] = useState<string | null>(null);
   const [gagal, setGagal] = useState(false);
@@ -14,13 +16,13 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     (async () => {
       setGagal(false);
       try {
-        const [saya, baris] = await Promise.all([
-          fetch("/api/me").then((r) => (r.ok ? r.json() : null)),
-          fetch("/api/households").then((r) => {
-            if (!r.ok) throw new Error("gagal");
-            return r.json();
-          }),
-        ]);
+        const [resMe, resHs] = await Promise.all([fetch("/api/me"), fetch("/api/households")]);
+        if (resMe.status === 401 || resHs.status === 401) {
+          if (!batal) router.replace("/login");
+          return;
+        }
+        if (!resHs.ok) throw new Error("gagal");
+        const [saya, baris] = await Promise.all([resMe.ok ? resMe.json() : null, resHs.json()]);
         if (batal) return;
         const daftar = (Array.isArray(baris) ? baris : [])
           .map((m: any) => ({ id: m?.households?.id, nama: m?.households?.nama, role: m?.role }))
@@ -34,7 +36,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     return () => {
       batal = true;
     };
-  }, [ulangi]);
+  }, [ulangi, router]);
 
   if (gagal) {
     return (

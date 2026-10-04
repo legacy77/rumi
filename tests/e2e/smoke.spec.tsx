@@ -14,6 +14,16 @@ import { render, screen, fireEvent, within } from "@testing-library/react";
 import Dashboard from "@/app/(main)/page";
 import MainLayout from "@/app/(main)/layout";
 
+const nav = vi.hoisted(() => {
+  const replace = vi.fn();
+  return { replace, router: { replace } };
+});
+
+vi.mock("next/navigation", () => ({
+  // Objek router stabil seperti useRouter() asli (referensi tidak ganti tiap render).
+  useRouter: () => nav.router,
+}));
+
 test("smoke: dashboard menampilkan kartu urgent + bottom nav 5 slot", async () => {
   vi.stubGlobal(
     "fetch",
