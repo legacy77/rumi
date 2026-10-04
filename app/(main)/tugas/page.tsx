@@ -28,7 +28,7 @@ export default function TugasPage({ tugasAwal = [], userId: userIdProp }: any) {
   const hariIni = new Date().toISOString().slice(0, 10);
   const identitasHilang = !userId;
   const tampil = tugas.filter((t: any) => {
-    if (filter === "milikku") return userId ? t.assignee_id === userId : true;
+    if (filter === "milikku") return userId ? t.assignee_id === userId : false;
     if (filter === "hariIni") return t.deadline === hariIni;
     return t.status === "done";
   });
@@ -90,7 +90,13 @@ export default function TugasPage({ tugasAwal = [], userId: userIdProp }: any) {
           {pendingSync.includes(t.id) && <p>menunggu sync</p>}
         </div>
       ))}
-      {tampil.length === 0 && !gagalMuat && <p>Belum ada tugas, santai dulu ya</p>}
+      {tampil.length === 0 && !gagalMuat && (
+        filter === "milikku" && !userId ? (
+          <p>Belum bisa filter Milikku, masuk dulu ya</p>
+        ) : (
+          <p>Belum ada tugas, santai dulu ya</p>
+        )
+      )}
       {gagalMuat && <p>Gagal memuat tugas, coba lagi ya</p>}
     </div>
   );

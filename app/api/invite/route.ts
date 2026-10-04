@@ -34,11 +34,15 @@ export async function POST(req: Request) {
     if (new Date(invite.expires_at).getTime() < Date.now()) {
       return NextResponse.json({ error: "Kode kedaluwarsa, minta kode baru ke admin" }, { status: 410 });
     }
-    const { error: joinErr } = await svc.from("memberships").upsert(
-      { user_id: user.id, household_id: invite.household_id, role: "member", status: "active" },
-      { onConflict: "user_id,household_id" }
-    );
-    if (joinErr) return NextResponse.json({ error: "Gagal gabung, coba lagi ya" }, { status: 500 });
+    // Jangan timpa peran yang sudah ada (mis. admin): gabung hanya kalau belum jadi anggota.
+    const { data: sudah } = await svc.from("memberships").select("role").eq("user_id", user.id).eq("household_id", invite.household_id).maybeSingle();
+    if (!sudah) {
+      const { error: gabungErr } = await svc.from("memberships").upsert(
+        { user_id: user.id, household_id: invite.household_id, role: "member", status: "active" },
+        { onConflict: "user_id,household_id", ignoreDuplicates: true }
+      );
+      if (gabungErr) return NextResponse.json({ error: "Gagal gabung, coba lagi ya" }, { status: 500 });
+    }
     return NextResponse.json({ household_id: invite.household_id, message: "Udah gabung! Selamat datang di rumah barumu" });
   }
 
@@ -52,6 +56,7 @@ export async function POST(req: Request) {
     .select("role")
     .eq("user_id", user.id)
     .eq("household_id", household_id)
+    .eq("status", "active")
     .single();
   if (!saya || saya.role !== "admin") {
     return NextResponse.json({ error: "Cuma admin yang bisa bikin link undangan" }, { status: 403 });

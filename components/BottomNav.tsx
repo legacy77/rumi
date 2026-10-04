@@ -11,6 +11,7 @@ export default function BottomNav() {
           <a href="/belanja">Belanja</a>
           <a href="/tagihan">Tagihan</a>
           <a href="/jadwal">Jadwal</a>
+          <a href="/pengingat">Pengingat</a>
           <button onClick={() => setBuka(false)}>Tutup</button>
         </div>
       )}
