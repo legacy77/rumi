@@ -3,15 +3,16 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
-  const supabase = createClient();
   const [email, setEmail] = useState("");
 
   async function loginEmail(e: React.FormEvent) {
     e.preventDefault();
+    const supabase = createClient();
     await supabase.auth.signInWithOtp({ email });
   }
 
   async function loginGoogle() {
+    const supabase = createClient();
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: `${window.location.origin}/auth/callback` },
