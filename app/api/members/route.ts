@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { createServerClient } from "@/lib/supabase/server";
 
+const UUID_V4_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 function serviceClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -57,6 +60,9 @@ export async function DELETE(req: Request) {
     typeof user_id !== "string" ||
     user_id.trim() === ""
   ) {
+    return NextResponse.json({ error: "household_id dan user_id wajib" }, { status: 400 });
+  }
+  if (!UUID_V4_RE.test(household_id) || !UUID_V4_RE.test(user_id)) {
     return NextResponse.json({ error: "household_id dan user_id wajib" }, { status: 400 });
   }
 
