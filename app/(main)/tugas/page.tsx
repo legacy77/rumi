@@ -26,6 +26,7 @@ export default function TugasPage({ tugasAwal = [], userId: userIdProp }: any) {
   }, [tugasAwal.length, householdId]);
 
   const hariIni = new Date().toISOString().slice(0, 10);
+  const identitasHilang = !userId;
   const tampil = tugas.filter((t: any) => {
     if (filter === "milikku") return userId ? t.assignee_id === userId : true;
     if (filter === "hariIni") return t.deadline === hariIni;
@@ -75,6 +76,7 @@ export default function TugasPage({ tugasAwal = [], userId: userIdProp }: any) {
         <button onClick={() => setFilter("hariIni")}>Hari ini</button>
         <button onClick={() => setFilter("selesai")}>Selesai</button>
       </div>
+      {identitasHilang && <p>Masuk dulu ya biar filter Milikku dan ambil tugas jalan</p>}
       {tampil.map((t: any) => (
         <div key={t.id}>
           <TaskRow
@@ -83,7 +85,7 @@ export default function TugasPage({ tugasAwal = [], userId: userIdProp }: any) {
             assignee={t.assignee_id === userId ? "Aku" : t.assignee_id}
             status={t.status}
             onToggle={() => toggle(t)}
-            onAssign={() => tugaskan(t)}
+            onAssign={userId ? () => tugaskan(t) : undefined}
           />
           {pendingSync.includes(t.id) && <p>menunggu sync</p>}
         </div>
