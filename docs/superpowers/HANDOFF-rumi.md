@@ -19,6 +19,7 @@ MVP Phase 1 SELESAI di branch `rumi-mvp-phase-1` (10/10 tasks + build wave + pre
 1. ~~Link Supabase project → apply migrations 0001–0005~~ SELESAI 2026-10-04: 0001–0005 + index (`rumi_perf_indexes`, 7 index) teraplikasi di `rosdradeohdbtsjlydbc`; 8 tabel RLS aktif; advisors: 2 WARN pra-eksis milik app travel (`get_trip_by_invite` SECURITY DEFINER — bukan RUMI, jangan disentuh) + leaked-password-protection disarankan aktif via dashboard.
 2. `.env.local` terisi (gitignored, aman). Masih butuh: `SUPABASE_SERVICE_ROLE_KEY` (server-only, untuk invite accept) + aktifkan Google provider di dashboard Auth (untuk login Google).
 3. Uji manual 2–3 keluarga: register → buat rumah → invite/kode kedaluwarsa → CRUD tugas/tagihan/belanja/jadwal → curl lintas-rumah harus 403 → dashboard/reminder/.ics → mode pesawat → Add-to-Home-Screen Android + iOS.
+   Smoke lokal 2026-10-04: /login 200, /offline 200, /pengingat 200, /api/me 401, /api/tasks 401 (guard auth OK). Temuan diperbaiki: kode baca ANON_KEY — alias ditambah di .env.local (nilai sama dengan publishable key).
 4. Catat pemakaian free-tier.
 
 ## Diketahui ditunda (bukan defect)
