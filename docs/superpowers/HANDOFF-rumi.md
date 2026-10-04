@@ -37,5 +37,9 @@ MVP Phase 1 SELESAI di branch `rumi-mvp-phase-1` (10/10 tasks + build wave + pre
    Bug live 2026-10-04 (review Approved): Google login tampak gagal lalu refresh malah masuk — `createBrowserClient` set `detectSessionInUrl:true` (auto-exchange ?code=), callback lalu exchange kedua → kode terpakai → pesan palsu. Fix: session-first + re-check sesi saat error exchange (commit 57b2dd9, c58a2fa).
 4. Catat pemakaian free-tier.
 
+## Backlog (belum dikerjakan — bukan defect)
+- **BL-1 · Uji join anggota kedua (blocked: butuh akun kedua).** Alur buat-rumah + undang + buka link undangan sudah lolos sampai halaman join, tetapi belum tervalidasi end-to-end sampai anggota benar-benar muncul di DB (`memberships` masih 1 anggota). Buka link undangan pakai akun Google/email LAIN di Incognito → verifikasi baris `role=member, status=active` + nama muncul di halaman Keluarga. Pemilik bisa pakai akun keluarga nyata saat pilot.
+- **BL-2 · Rumah orphan.** 2 baris `households` tanpa `memberships` (sisa bug bootstrap lama). Alur baru sudah benar; bersihkan manual via SQL/dashboard saat sempat.
+
 ## Diketahui ditunda (bukan defect)
 Pengaturan page, profil/nama anggota, Keluarkan-anggota API, standalone-reminders API, push (Phase 2), payment, hygiene batch.
