@@ -34,6 +34,7 @@ MVP Phase 1 SELESAI di branch `rumi-mvp-phase-1` (10/10 tasks + build wave + pre
    Bug live 2026-10-04 (review Approved): magic-link tak pernah login — token di URL fragment (#access_token) tak sampai ke server route. Fix: /auth/callback jadi client page (setSession hash + exchange ?code= client-side), safeNext di lib/auth-redirect.ts.
    Deploy prod 2026-10-04: Vercel `https://rumi-chi-tan.vercel.app` (repo GitHub legacy77/rumi, auto-deploy). Env Vercel diisi + Supabase Site/Redirect URL diarahkan ke domain prod. Verifikasi: /,/login,/auth/callback 200, /api/* 401 (benar).
    Nav UX 2026-10-04 (lane designer, committed): tab Pengingat di BottomNav, shortcut Pengingat/Keluarga di dashboard, tombol tambah tugas inline di /tugas, label offline "Kembali ke Beranda".
+   Bug live 2026-10-04 (review Approved): Google login tampak gagal lalu refresh malah masuk — `createBrowserClient` set `detectSessionInUrl:true` (auto-exchange ?code=), callback lalu exchange kedua → kode terpakai → pesan palsu. Fix: session-first + re-check sesi saat error exchange (commit 57b2dd9, c58a2fa).
 4. Catat pemakaian free-tier.
 
 ## Diketahui ditunda (bukan defect)
