@@ -10,7 +10,10 @@ const fontSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "RUMI",
+  title: {
+    default: "RUMI — Rumah Rapi, Hati Tenang",
+    template: "%s | RUMI",
+  },
   description: "Asisten digital untuk urusan rumah sehari-hari.",
 };
 
