@@ -9,7 +9,10 @@ export async function GET() {
     .from("memberships")
     .select("role, households(id, nama)")
     .eq("user_id", user.id);
-  if (error) return NextResponse.json({ error: "Gagal memuat rumah" }, { status: 500 });
+  if (error) {
+    const detail = process.env.NODE_ENV !== "production" ? { detail: `${error.code ?? "?"}: ${error.message}` } : {};
+    return NextResponse.json({ error: "Gagal memuat rumah", ...detail }, { status: 500 });
+  }
   return NextResponse.json(data ?? []);
 }
 
