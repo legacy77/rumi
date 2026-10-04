@@ -32,6 +32,8 @@ MVP Phase 1 SELESAI di branch `rumi-mvp-phase-1` (10/10 tasks + build wave + pre
    Bug live 2026-10-04 (review Approved): Shift+F5 wajib — layout fetch sekali di mount (401 saat cookie belum sinkron) + SW cache-first JS basi. Fix: retry-once 401, force-dynamic /api/me+/api/households, refetch provider, SW bump rumi-v2 + network-first-fallback.
    Bug live 2026-10-04 (review Approved): /join 401 hanya teks tanpa aksi → user Incognito nyangkut; callback buang kode undangan. Fix: CTA login dengan next ter-encode, /login teruskan next ke emailRedirectTo+OAuth, callback safeNext (fail-closed /), test auth-callback-next.
    Bug live 2026-10-04 (review Approved): magic-link tak pernah login — token di URL fragment (#access_token) tak sampai ke server route. Fix: /auth/callback jadi client page (setSession hash + exchange ?code= client-side), safeNext di lib/auth-redirect.ts.
+   Deploy prod 2026-10-04: Vercel `https://rumi-chi-tan.vercel.app` (repo GitHub legacy77/rumi, auto-deploy). Env Vercel diisi + Supabase Site/Redirect URL diarahkan ke domain prod. Verifikasi: /,/login,/auth/callback 200, /api/* 401 (benar).
+   Nav UX 2026-10-04 (lane designer, committed): tab Pengingat di BottomNav, shortcut Pengingat/Keluarga di dashboard, tombol tambah tugas inline di /tugas, label offline "Kembali ke Beranda".
 4. Catat pemakaian free-tier.
 
 ## Diketahui ditunda (bukan defect)
