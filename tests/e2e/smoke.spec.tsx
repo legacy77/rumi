@@ -22,6 +22,7 @@ const nav = vi.hoisted(() => {
 vi.mock("next/navigation", () => ({
   // Objek router stabil seperti useRouter() asli (referensi tidak ganti tiap render).
   useRouter: () => nav.router,
+  usePathname: () => "/",
 }));
 
 test("smoke: dashboard menampilkan kartu urgent + bottom nav 5 slot", async () => {
@@ -45,9 +46,14 @@ test("smoke: dashboard menampilkan kartu urgent + bottom nav 5 slot", async () =
       </MainLayout>
     );
     expect(await screen.findByText(/jatuh tempo besok/i)).toBeInTheDocument();
-    const nav = screen.getByRole("navigation", { name: /navigasi utama/i });
+    const nav = screen.getByRole("navigation", { name: "Navigasi utama" });
     for (const nama of ["Beranda", "Tugas", "Belanja", "Keluarga"]) {
       expect(within(nav).getByRole("link", { name: nama })).toBeInTheDocument();
+    }
+    // Nav desktop (aside) punya label berbeda; pastikan 7 tautannya juga ada.
+    const navDesktop = screen.getByRole("navigation", { name: "Navigasi utama desktop" });
+    for (const nama of ["Beranda", "Tugas", "Tagihan", "Belanja", "Jadwal", "Pengingat", "Keluarga"]) {
+      expect(within(navDesktop).getByRole("link", { name: nama })).toBeInTheDocument();
     }
     fireEvent.click(screen.getByRole("button", { name: /tambah/i }));
     const dialog = screen.getByRole("dialog");

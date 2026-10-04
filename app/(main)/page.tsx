@@ -1,6 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
 import AttentionCard from "@/components/AttentionCard";
+import PageHeader from "@/components/PageHeader";
+import { EmptyState, ErrorState } from "@/components/ContentState";
+import { Skeleton } from "@/components/Skeleton";
 import { useHousehold } from "@/lib/household-context";
 import { createClient } from "@/lib/supabase/client";
 
@@ -26,6 +29,7 @@ export default function Dashboard({ urgent = null, counts = null }: any) {
   const [belanja, setBelanja] = useState<any[]>([]);
   const [jadwal, setJadwal] = useState<any[]>([]);
   const [gagalMuat, setGagalMuat] = useState(false);
+  const [memuat, setMemuat] = useState<boolean>(Boolean(householdId));
   const [daftar, setDaftar] = useState<any[]>([]);
   const [nama, setNama] = useState("");
   const [buatGagal, setBuatGagal] = useState<string | null>(null);
@@ -37,10 +41,12 @@ export default function Dashboard({ urgent = null, counts = null }: any) {
       setTagihan([]);
       setBelanja([]);
       setJadwal([]);
+      setMemuat(false);
       return;
     }
     let batal = false;
     let channel: any = null;
+    setMemuat(true);
     async function muat() {
       try {
         const [t, b, s, j] = await Promise.all([
@@ -68,6 +74,8 @@ export default function Dashboard({ urgent = null, counts = null }: any) {
         if (Array.isArray(j)) setJadwal(j);
       } catch {
         if (!batal) setGagalMuat(true);
+      } finally {
+        if (!batal) setMemuat(false);
       }
     }
     muat();
@@ -182,74 +190,121 @@ export default function Dashboard({ urgent = null, counts = null }: any) {
   const total = angka("tugas") + angka("tagihan") + angka("belanja") + angka("jadwal");
   const sisa = hero && total > 1 ? `+ ${total - 1} hal lain nunggu` : null;
 
-  return (
-    <div>
-      <h1>Beranda</h1>
-      {daftar.length >= 1 && (
-        <label>
-          Pindah rumah
-          <select
-            aria-label="Pindah rumah"
-            value={householdId ?? ""}
-            onChange={(e) => {
-              const pilih = daftar.find((h: any) => h.id === e.target.value);
-              if (pilih) ctx?.switchHousehold?.(pilih);
-            }}
-          >
-            {!householdId && <option value="">Pilih rumah</option>}
-            {daftar.map((h: any) => (
-              <option key={h.id} value={h.id}>
-                {h.nama}
-              </option>
+  const ringkas = [
+    { href: "/tugas", judul: "Tugas tersisa hari ini", nilai: angka("tugas"), satuan: "tugas" },
+    { href: "/tagihan", judul: "Tagihan H-3", nilai: angka("tagihan"), satuan: "tagihan" },
+    { href: "/belanja", judul: "Belanja belum dibeli", nilai: angka("belanja"), satuan: "barang" },
+    { href: "/jadwal", judul: "Agenda hari ini", nilai: angka("jadwal"), satuan: "agenda" },
+  ];
+
+  if (memuat && !gagalMuat) {
+    return (
+      <div className="space-y-8">
+        <PageHeader title="Beranda" description="Ringkasan rumahmu hari ini." />
+        <div role="status" aria-label="Memuat ringkasan" aria-busy="true" className="space-y-8">
+          <Skeleton className="h-28 w-full rounded-2xl" />
+          <div className="space-y-1">
+            {Array.from({ length: 4 }, (_, i) => (
+              <div key={i} className="flex items-center justify-between border-b border-hairline py-4">
+                <Skeleton className="h-4 w-40" />
+                <Skeleton className="h-4 w-16" />
+              </div>
             ))}
-          </select>
-        </label>
-      )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-8">
+      <PageHeader
+        title="Beranda"
+        description="Ringkasan rumahmu hari ini."
+        action={
+          daftar.length >= 1 ? (
+            <label className="flex items-center gap-2 text-xs text-muted">
+              <span className="sr-only">Pindah rumah</span>
+              <select
+                aria-label="Pindah rumah"
+                value={householdId ?? ""}
+                onChange={(e) => {
+                  const pilih = daftar.find((h: any) => h.id === e.target.value);
+                  if (pilih) ctx?.switchHousehold?.(pilih);
+                }}
+                className="min-h-11 rounded-lg border border-line bg-white px-3 text-sm text-ink"
+              >
+                {!householdId && <option value="">Pilih rumah</option>}
+                {daftar.map((h: any) => (
+                  <option key={h.id} value={h.id}>
+                    {h.nama}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : undefined
+        }
+      />
+
       {!householdId && !gagalMuat && (
-        <section>
-          <p>Belum ada rumah aktif, bikin rumah pertamamu dulu ya</p>
-          <input
-            aria-label="Nama rumah"
-            value={nama}
-            onChange={(e) => setNama(e.target.value)}
-            placeholder="Nama rumah, mis. Rumah Tebet"
-          />
-          <button onClick={buatRumah} disabled={buatSibuk}>
-            Buat rumah
-          </button>
-          {buatGagal && <p>{buatGagal}</p>}
+        <section className="rounded-2xl border border-line bg-surface px-5 py-6 sm:px-6">
+          <h2 className="text-base font-semibold text-ink">Belum ada rumah aktif, bikin rumah pertamamu dulu ya</h2>
+          <p className="mt-1 text-sm text-muted">Kasih nama biar urusan rumah bisa mulai dirapikan.</p>
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+            <input
+              aria-label="Nama rumah"
+              value={nama}
+              onChange={(e) => setNama(e.target.value)}
+              placeholder="Nama rumah, mis. Rumah Tebet"
+              className="min-h-11 flex-1 rounded-xl border border-line bg-white px-4 text-sm text-ink placeholder:text-muted/70"
+            />
+            <button
+              onClick={buatRumah}
+              disabled={buatSibuk}
+              className="rumi-transition inline-flex min-h-11 items-center justify-center rounded-xl bg-terracotta px-5 text-sm font-semibold text-white hover:opacity-90 active:scale-[0.98]"
+            >
+              Buat rumah
+            </button>
+          </div>
+          {buatGagal && <p className="mt-3 text-sm text-terracotta">{buatGagal}</p>}
         </section>
       )}
+
       {hero ? (
         <AttentionCard text={hero.text} sisa={sisa} />
       ) : (
-        !gagalMuat && <p>Santai dulu, nggak ada yang urgent</p>
+        !gagalMuat && (
+          <EmptyState title="Santai dulu, nggak ada yang urgent" detail="Semua urusan rumah kelihatan aman hari ini." />
+        )
       )}
-      <section>
-        <a href="/tugas">
-          <h2>Tugas tersisa hari ini</h2>
-          <p>{angka("tugas")} tugas</p>
-        </a>
-        <a href="/tagihan">
-          <h2>Tagihan H-3</h2>
-          <p>{angka("tagihan")} tagihan</p>
-        </a>
-        <a href="/belanja">
-          <h2>Belanja belum dibeli</h2>
-          <p>{angka("belanja")} barang</p>
-        </a>
-        <a href="/jadwal">
-          <h2>Agenda hari ini</h2>
-          <p>{angka("jadwal")} agenda</p>
-        </a>
-        <a href="/pengingat">
-          <h2>Pengingat hari ini</h2>
-        </a>
-        <a href="/keluarga">
-          <h2>Anggota keluarga</h2>
-        </a>
+
+      <section aria-label="Ringkasan per area">
+        <ul className="divide-y divide-hairline border-y border-line">
+          {ringkas.map((r) => (
+            <li key={r.href}>
+              <a
+                href={r.href}
+                className="rumi-transition flex min-h-14 items-baseline justify-between gap-4 py-4 hover:opacity-80"
+              >
+                <span className="text-sm font-medium text-ink">{r.judul}</span>
+                <span className="shrink-0 text-sm tabular-nums text-muted">
+                  <span className="font-semibold text-ink">{r.nilai}</span> {r.satuan}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+          <a href="/pengingat" className="rumi-transition text-muted hover:text-ink">
+            Pengingat hari ini →
+          </a>
+          <a href="/keluarga" className="rumi-transition text-muted hover:text-ink">
+            Anggota keluarga →
+          </a>
+        </div>
       </section>
-      {gagalMuat && <p>Gagal memuat ringkasan, coba lagi ya</p>}
+
+      {gagalMuat && <ErrorState text="Gagal memuat ringkasan, coba lagi ya" />}
     </div>
   );
 }

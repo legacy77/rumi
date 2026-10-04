@@ -1,5 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
+import PageHeader from "@/components/PageHeader";
+import { EmptyState, ErrorState } from "@/components/ContentState";
+import { SkeletonList } from "@/components/Skeleton";
 import { useHousehold } from "@/lib/household-context";
 
 function normalisasi(items: any[]) {
@@ -18,6 +21,7 @@ export default function BelanjaPage({ items = [], itemsAwal }: any) {
   const awal = itemsAwal ?? items;
   const [daftar, setDaftar] = useState<any[]>(() => normalisasi(awal));
   const [gagalMuat, setGagalMuat] = useState(false);
+  const [memuat, setMemuat] = useState<boolean>(Boolean(householdId) && awal.length === 0);
   const [pesan, setPesan] = useState("");
   const [nama, setNama] = useState("");
   const adaPerlu = daftar.some((x: any) => x.status !== "dibeli");
@@ -25,13 +29,25 @@ export default function BelanjaPage({ items = [], itemsAwal }: any) {
 
   useEffect(() => {
     if (awal.length > 0 || !householdId) return;
+    let batal = false;
+    setMemuat(true);
     fetch(`/api/shopping?household_id=${householdId}`)
       .then((r) => {
         if (!r.ok) throw new Error("gagal");
         return r.json();
       })
-      .then((d) => Array.isArray(d) && setDaftar(normalisasi(d)))
-      .catch(() => setGagalMuat(true));
+      .then((d) => {
+        if (!batal && Array.isArray(d)) setDaftar(normalisasi(d));
+      })
+      .catch(() => {
+        if (!batal) setGagalMuat(true);
+      })
+      .finally(() => {
+        if (!batal) setMemuat(false);
+      });
+    return () => {
+      batal = true;
+    };
   }, [awal.length, householdId]);
 
   async function tambah() {
@@ -119,51 +135,97 @@ export default function BelanjaPage({ items = [], itemsAwal }: any) {
   }
 
   return (
-    <div>
-      <h1>Belanja</h1>
-      <div>
-        <input
-          placeholder="Nama barang"
-          value={nama}
-          onChange={(e) => setNama(e.target.value)}
-          className="min-h-12"
-        />
-        <button onClick={tambah} className="min-h-12">
-          Tambah barang
-        </button>
-      </div>
-      <div>
-        {adaPerlu && (
-          <button onClick={tandaiSemua} className="min-h-12">
-            Tandai semua dibeli
+    <div className="space-y-6">
+      <PageHeader title="Belanja" description="Daftar belanjaan rumah." />
+
+      <section aria-label="Tambah barang">
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <input
+            aria-label="Nama barang"
+            placeholder="Nama barang"
+            value={nama}
+            onChange={(e) => setNama(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") tambah();
+            }}
+            className="min-h-11 flex-1 rounded-xl border border-line bg-white px-4 text-sm text-ink placeholder:text-muted/70"
+          />
+          <button
+            onClick={tambah}
+            className="rumi-transition inline-flex min-h-11 items-center justify-center rounded-xl bg-terracotta px-5 text-sm font-semibold text-white hover:opacity-90 active:scale-[0.98]"
+          >
+            Tambah barang
           </button>
+        </div>
+        {pesan && <p className="mt-2 text-sm text-terracotta">{pesan}</p>}
+      </section>
+
+      {(adaPerlu || adaDibeli) && (
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+          {adaPerlu && (
+            <button
+              onClick={tandaiSemua}
+              className="rumi-transition inline-flex min-h-11 items-center text-sm font-medium text-terracotta hover:opacity-80"
+            >
+              Tandai semua dibeli
+            </button>
+          )}
+          {adaDibeli && (
+            <button
+              onClick={hapusDibeli}
+              className="rumi-transition inline-flex min-h-11 items-center text-sm font-medium text-muted hover:text-ink"
+            >
+              Hapus yang dibeli
+            </button>
+          )}
+        </div>
+      )}
+
+      <section aria-label="Daftar belanja" aria-busy={memuat || undefined}>
+        {memuat && !gagalMuat ? (
+          <SkeletonList count={4} label="Memuat belanja" />
+        ) : (
+          <ul className="divide-y divide-hairline border-y border-line">
+            {daftar.map((item: any, i: number) => {
+              const dibeli = item.status === "dibeli";
+              return (
+                <li key={item.id ?? `idx-${i}`}>
+                  <label className="flex min-h-12 cursor-pointer items-center gap-3 py-1">
+                    <input
+                      type="checkbox"
+                      className="h-5 w-5 shrink-0 accent-[#D97757]"
+                      checked={dibeli}
+                      onChange={() => toggle(item)}
+                      aria-label={item.nama}
+                    />
+                    <span
+                      className={`flex-1 text-sm ${
+                        dibeli ? "text-muted line-through" : "text-ink"
+                      }`}
+                    >
+                      {item.nama}
+                    </span>
+                    <span className={`shrink-0 text-xs ${dibeli ? "text-muted" : "text-terracotta"}`}>
+                      {dibeli ? "beres ✓" : "perlu"}
+                    </span>
+                  </label>
+                </li>
+              );
+            })}
+          </ul>
         )}
-        {adaDibeli && (
-          <button onClick={hapusDibeli} className="min-h-12">
-            Hapus yang dibeli
-          </button>
+
+        {!memuat && daftar.length === 0 && !gagalMuat && (
+          <div className="pt-4">
+            <EmptyState title="Belum ada barang, santai dulu ya" />
+          </div>
         )}
-      </div>
-      <ul>
-        {daftar.map((item: any, i: number) => (
-          <li key={item.id ?? `idx-${i}`} className="min-h-12">
-            <label className="min-h-12">
-              <input
-                type="checkbox"
-                className="h-6 w-6"
-                checked={item.status === "dibeli"}
-                onChange={() => toggle(item)}
-                aria-label={item.nama}
-              />
-              <span>{item.nama}</span>
-            </label>
-            <span>{item.status === "dibeli" ? "beres ✓" : "perlu"}</span>
-          </li>
-        ))}
-      </ul>
-      {daftar.length === 0 && !gagalMuat && <p>Belum ada barang, santai dulu ya</p>}
-      {gagalMuat && <p>Gagal memuat belanja, coba lagi ya</p>}
-      {pesan && <p>{pesan}</p>}
+        {gagalMuat && (
+          <div className="pt-4">
+            <ErrorState text="Gagal memuat belanja, coba lagi ya" />
+          </div>
+        )}
+      </section>
     </div>
   );
 }

@@ -10,6 +10,7 @@ const nav = vi.hoisted(() => {
 vi.mock("next/navigation", () => ({
   // Objek router stabil seperti useRouter() asli (referensi tidak ganti tiap render).
   useRouter: () => nav.router,
+  usePathname: () => "/",
 }));
 
 beforeEach(() => {
@@ -32,6 +33,34 @@ test("401 belum login dialihkan ke /login, bukan error", async () => {
   await waitFor(() => expect(nav.replace).toHaveBeenCalledWith("/login"));
   expect(screen.queryByText(/gagal memuat rumahmu/i)).toBeNull();
   expect(screen.queryByText("Anak")).toBeNull();
+});
+
+test("tampilkan skeleton penyiapan rumah (bukan teks polos) saat memuat", async () => {
+  let selesaiMe: any = null;
+  let selesaiHs: any = null;
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(
+      (url: any) =>
+        new Promise((resolve) => {
+          if (String(url).includes("/api/me")) selesaiMe = resolve;
+          else selesaiHs = resolve;
+        })
+    )
+  );
+  render(
+    <MainLayout>
+      <span>Anak</span>
+    </MainLayout>
+  );
+  const status = await screen.findByRole("status", { name: /menyiapkan rumah/i });
+  expect(status).not.toBeNull();
+  expect(screen.queryByText(/siapin rumahmu dulu/i)).toBeNull();
+  expect(screen.queryByText("Anak")).toBeNull();
+  // Selesaikan permintaan supaya tidak ada state update di luar act.
+  selesaiMe({ ok: true, status: 200, json: () => Promise.resolve({ id: "u1" }) });
+  selesaiHs({ ok: true, status: 200, json: () => Promise.resolve([]) });
+  await waitFor(() => expect(screen.queryByRole("status", { name: /menyiapkan rumah/i })).toBeNull());
 });
 
 test("gagal non-401 tetap tampilkan error + retry", async () => {

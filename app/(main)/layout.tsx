@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import BottomNav from "@/components/BottomNav";
+import DesktopNav from "@/components/DesktopNav";
 import { HouseholdProvider } from "@/lib/household-context";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
@@ -14,16 +15,25 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   useEffect(() => {
     let batal = false;
     let retryUsed = false;
+    const ac = new AbortController();
+    // Jaring pengaman: koneksi menggantung tak boleh membuat layar
+    // "Menyiapkan rumah" macet selamanya — alihkan ke state gagal + Coba lagi.
+    const jedaWaktu = setTimeout(() => ac.abort(), 8000);
+    const ambil = () =>
+      Promise.all([
+        fetch("/api/me", { signal: ac.signal }),
+        fetch("/api/households", { signal: ac.signal }),
+      ]);
     (async () => {
       setGagal(false);
       try {
         let resMe, resHs;
-        [resMe, resHs] = await Promise.all([fetch("/api/me"), fetch("/api/households")]);
+        [resMe, resHs] = await ambil();
         // cookie may not be synced yet (SSR sync or fresh login): retry once
         if ((resMe.status === 401 || resHs.status === 401) && !retryUsed && !batal) {
           retryUsed = true;
           await new Promise((r) => setTimeout(r, 300));
-          [resMe, resHs] = await Promise.all([fetch("/api/me"), fetch("/api/households")]);
+          [resMe, resHs] = await ambil();
         }
         if (resMe.status === 401 || resHs.status === 401) {
           if (!batal) router.replace("/login");
@@ -43,6 +53,8 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     })();
     return () => {
       batal = true;
+      clearTimeout(jedaWaktu);
+      ac.abort();
     };
   }, [ulangi, router]);
 
@@ -59,16 +71,60 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
   if (gagal) {
     return (
-      <div>
-        <p>Gagal memuat rumahmu, coba lagi ya</p>
-        <button onClick={() => setUlangi((n) => n + 1)}>Coba lagi</button>
-      </div>
+      <main className="min-h-screen bg-cream px-5 py-16 sm:px-8">
+        <div className="mx-auto max-w-md rounded-2xl border border-line bg-white p-6 text-center shadow-quiet">
+          <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-primary/12 text-lg" aria-hidden="true">
+            ⌂
+          </div>
+          <h1 className="mt-4 text-lg font-semibold text-ink">Gagal memuat rumahmu, coba lagi ya</h1>
+          <p className="mt-1 text-sm text-muted">Koneksi lagi ngambek. Santai, coba sekali lagi.</p>
+          <button
+            onClick={() => setUlangi((n) => n + 1)}
+            className="rumi-transition mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-primary px-5 text-sm font-semibold text-white hover:opacity-90 active:scale-[0.98] sm:w-auto"
+          >
+            Coba lagi
+          </button>
+        </div>
+      </main>
     );
   }
-  if (aktif === undefined) return <p>Siapin rumahmu dulu ya…</p>;
+  if (aktif === undefined) {
+    return (
+      <main className="min-h-screen bg-cream px-5 py-10 sm:px-8" role="status" aria-label="Menyiapkan rumah">
+        <div className="mx-auto max-w-4xl animate-pulse space-y-8">
+          <header className="flex items-center gap-3 border-b border-line pb-6">
+            <div className="h-10 w-10 rounded-xl bg-primary/15" />
+            <div className="space-y-2">
+              <div className="h-3 w-14 rounded bg-ink/10" />
+              <div className="h-5 w-40 rounded bg-ink/10" />
+            </div>
+          </header>
+          <div className="max-w-2xl space-y-4">
+            <div className="h-9 w-52 rounded bg-ink/10" />
+            <div className="h-4 w-72 max-w-full rounded bg-ink/[0.07]" />
+          </div>
+          <div className="grid gap-3 md:grid-cols-2">
+            {Array.from({ length: 4 }, (_, i) => (
+              <div key={i} className="rounded-2xl border border-line bg-surface p-5">
+                <div className="h-3 w-20 rounded bg-ink/[0.08]" />
+                <div className="mt-5 h-7 w-12 rounded bg-ink/[0.08]" />
+                <div className="mt-3 h-3 w-32 rounded bg-ink/[0.06]" />
+              </div>
+            ))}
+          </div>
+          <p className="text-sm text-muted">Menyiapkan rumahmu…</p>
+        </div>
+      </main>
+    );
+  }
   return (
     <HouseholdProvider initial={aktif ? { ...aktif, userId } : null}>
-      {children}
+      <div className="min-h-screen bg-cream">
+        <div className="mx-auto flex max-w-5xl gap-10 px-4 pb-28 pt-6 sm:px-6 lg:pb-16 lg:pt-10">
+          <DesktopNav />
+          <main className="min-w-0 flex-1">{children}</main>
+        </div>
+      </div>
       <BottomNav />
     </HouseholdProvider>
   );
