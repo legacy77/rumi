@@ -13,6 +13,29 @@ async function activeMembership(supabase: any, userId: string, household_id: str
   return data;
 }
 
+// "ok" | "bukan-anggota" | "db-error" — null (tanpa assignee) selalu ok.
+async function cekAssignee(supabase: any, assignee_id: unknown, household_id: string) {
+  if (assignee_id === null || assignee_id === undefined) return "ok";
+  if (typeof assignee_id !== "string" || assignee_id.trim() === "") return "bukan-anggota";
+  const { data, error } = await supabase
+    .from("memberships")
+    .select("user_id")
+    .eq("user_id", assignee_id)
+    .eq("household_id", household_id)
+    .eq("status", "active")
+    .maybeSingle();
+  if (error) return "db-error";
+  if (!data) return "bukan-anggota";
+  return "ok";
+}
+
+function responAssignee(hasil: string) {
+  if (hasil === "bukan-anggota") {
+    return NextResponse.json({ error: "Anggota nggak ketemu di rumah ini" }, { status: 400 });
+  }
+  return NextResponse.json({ error: "Gagal cek anggota, coba lagi ya" }, { status: 500 });
+}
+
 export async function GET(req: Request) {
   const supabase = createServerClient();
   const {
@@ -55,6 +78,8 @@ export async function POST(req: Request) {
   }
   const member = await activeMembership(supabase, user.id, household_id);
   if (!member) return NextResponse.json({ error: "Bukan anggota rumah ini" }, { status: 403 });
+  const cek = await cekAssignee(supabase, body?.assignee_id, household_id);
+  if (cek !== "ok") return responAssignee(cek);
   const { data, error } = await supabase
     .from("tasks")
     .insert({
@@ -94,7 +119,11 @@ export async function PATCH(req: Request) {
   if (!member) return NextResponse.json({ error: "Bukan anggota rumah ini" }, { status: 403 });
   const patch: any = {};
   if (status === "todo" || status === "done") patch.status = status;
-  if (assignee_id === null || typeof assignee_id === "string") patch.assignee_id = assignee_id;
+  if ("assignee_id" in (body ?? {})) {
+    const cek = await cekAssignee(supabase, assignee_id, household_id);
+    if (cek !== "ok") return responAssignee(cek);
+    patch.assignee_id = assignee_id ?? null;
+  }
   if (Object.keys(patch).length === 0) {
     return NextResponse.json({ error: "Nggak ada yang diubah" }, { status: 400 });
   }

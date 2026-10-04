@@ -12,13 +12,17 @@ export default function TugasPage({ tugasAwal = [], userId: userIdProp }: any) {
   const [tugas, setTugas] = useState<any[]>(tugasAwal);
   const [filter, setFilter] = useState<Filter>("milikku");
   const [pendingSync, setPendingSync] = useState<string[]>([]);
+  const [gagalMuat, setGagalMuat] = useState(false);
 
   useEffect(() => {
     if (tugasAwal.length > 0 || !householdId) return;
     fetch(`/api/tasks?household_id=${householdId}`)
-      .then((r) => (r.ok ? r.json() : []))
+      .then((r) => {
+        if (!r.ok) throw new Error("gagal");
+        return r.json();
+      })
       .then((d) => Array.isArray(d) && setTugas(d))
-      .catch(() => {});
+      .catch(() => setGagalMuat(true));
   }, [tugasAwal.length, householdId]);
 
   const hariIni = new Date().toISOString().slice(0, 10);
@@ -84,7 +88,8 @@ export default function TugasPage({ tugasAwal = [], userId: userIdProp }: any) {
           {pendingSync.includes(t.id) && <p>menunggu sync</p>}
         </div>
       ))}
-      {tampil.length === 0 && <p>Belum ada tugas, santai dulu ya</p>}
+      {tampil.length === 0 && !gagalMuat && <p>Belum ada tugas, santai dulu ya</p>}
+      {gagalMuat && <p>Gagal memuat tugas, coba lagi ya</p>}
     </div>
   );
 }
