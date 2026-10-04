@@ -52,7 +52,15 @@ export default function AuthCallbackPage() {
 
         // Auto-detect tidak menghasilkan sesi — lakukan exchange manual.
         const { error } = await supabase.auth.exchangeCodeForSession(code);
-        if (error) return gagal("Gagal masuk, coba kirim link lagi ya.");
+        if (error) {
+          // Auto-detect mungkin mengonsumsi code bersamaan; sesi menang.
+          const sesiUlang = await supabase.auth.getSession();
+          if (sesiUlang.data.session) {
+            router.replace(next);
+            return;
+          }
+          return gagal("Gagal masuk, coba kirim link lagi ya.");
+        }
         router.replace(next);
         return;
       }
