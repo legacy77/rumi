@@ -21,6 +21,7 @@ MVP Phase 1 SELESAI di branch `rumi-mvp-phase-1` (10/10 tasks + build wave + pre
 3. Uji manual 2–3 keluarga: register → buat rumah → invite/kode kedaluwarsa → CRUD tugas/tagihan/belanja/jadwal → curl lintas-rumah harus 403 → dashboard/reminder/.ics → mode pesawat → Add-to-Home-Screen Android + iOS.
    Smoke lokal 2026-10-04: /login 200, /offline 200, /pengingat 200, /api/me 401, /api/tasks 401 (guard auth OK). Temuan diperbaiki: kode baca ANON_KEY — alias ditambah di .env.local (nilai sama dengan publishable key).
    Follow-up nav 2026-10-04 (review Approved): `app/(main)/layout.tsx` mount provider + BottomNav global; dashboard buat-rumah + pindah-rumah; 401→/login. Lubang integrasi (provider tak ter-mount, nav hanya dashboard, tanpa UI buat-rumah) tertutup.
+   Bug live 2026-10-04 (review Approved): policy "anggota baca serumah" rekursi tak-berhingga → semua baca memberships 500. Migrasi 0006 drop policy (live terbukti via probe); `app/api/members` pindah ke service-role dengan gate user. Satu minor deferred: gate error → 403 (fail-closed, konsisten).
 4. Catat pemakaian free-tier.
 
 ## Diketahui ditunda (bukan defect)
