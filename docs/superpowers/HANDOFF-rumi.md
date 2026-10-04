@@ -1,7 +1,8 @@
-# RUMI — Handoff (2026-10-04, updated)
+# RUMI — Handoff (2026-10-04, sesi terakhir c509e38)
 
 ## Status
 MVP Phase 1 SELESAI di branch `rumi-mvp-phase-1` (10/10 tasks + build wave + pre-pilot wave, semua review bersih). Siap pilot keluarga. BELUM merge ke main.
+Main (produksi `https://rumi-chi-tan.vercel.app`) hijau: **vitest 45/45, `tsc` 0, `next build` 22/22**. Working tree bersih, `origin/main` sinkron di `c509e38`.
 
 ## Keputusan locked (dari brainstorming)
 - Scope C · Multi-rumah · Peran Admin/Anggota · Next.js PWA + Supabase · zero-cost
