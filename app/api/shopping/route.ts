@@ -29,8 +29,7 @@ export async function GET(req: Request) {
   const { data, error } = await supabase
     .from("shopping_items")
     .select("id, nama, jumlah, catatan, status")
-    .eq("household_id", household_id)
-    .order("created_at", { ascending: false });
+    .eq("household_id", household_id);
   if (error) return NextResponse.json({ error: "Gagal memuat belanja, coba lagi ya" }, { status: 500 });
   return NextResponse.json(data ?? []);
 }
