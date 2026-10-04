@@ -26,6 +26,7 @@ MVP Phase 1 SELESAI di branch `rumi-mvp-phase-1` (10/10 tasks + build wave + pre
    Smoke lokal 2026-10-04: /login 200, /offline 200, /pengingat 200, /api/me 401, /api/tasks 401 (guard auth OK). Temuan diperbaiki: kode baca ANON_KEY — alias ditambah di .env.local (nilai sama dengan publishable key).
    Follow-up nav 2026-10-04 (review Approved): `app/(main)/layout.tsx` mount provider + BottomNav global; dashboard buat-rumah + pindah-rumah; 401→/login. Lubang integrasi (provider tak ter-mount, nav hanya dashboard, tanpa UI buat-rumah) tertutup.
    Bug live 2026-10-04 (review Approved): policy "anggota baca serumah" rekursi tak-berhingga → semua baca memberships 500. Migrasi 0006 drop policy (live terbukti via probe); `app/api/members` pindah ke service-role dengan gate user. Satu minor deferred: gate error → 403 (fail-closed, konsisten).
+   Bug live 2026-10-04 (review Approved): POST households 400 — baca-balik `.select()` ditolak SELECT-RLS (creator belum member). Urutan jadi: id client-side → insert → membership → select.
 4. Catat pemakaian free-tier.
 
 ## Diketahui ditunda (bukan defect)
