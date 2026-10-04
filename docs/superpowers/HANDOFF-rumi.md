@@ -29,6 +29,7 @@ MVP Phase 1 SELESAI di branch `rumi-mvp-phase-1` (10/10 tasks + build wave + pre
    Bug live 2026-10-04 (review Approved): POST households 400 — baca-balik `.select()` ditolak SELECT-RLS (creator belum member). Urutan jadi: id client-side → insert → membership → select.
    Bug live 2026-10-04 (review Approved, terbukti live end-to-end): membership insert 42501 — nested-RLS (cek policy baca households yang tak terlihat pra-member). Bootstrap membership via service-role dengan verifikasi created_by.
    Pilot live 2026-10-04: rumah pertama tercipta via app dan terverifikasi di DB (admin, active). Alur buat-rumah closed-loop.
+   Bug live 2026-10-04 (review Approved): Shift+F5 wajib — layout fetch sekali di mount (401 saat cookie belum sinkron) + SW cache-first JS basi. Fix: retry-once 401, force-dynamic /api/me+/api/households, refetch provider, SW bump rumi-v2 + network-first-fallback.
 4. Catat pemakaian free-tier.
 
 ## Diketahui ditunda (bukan defect)
