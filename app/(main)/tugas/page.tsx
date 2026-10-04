@@ -102,7 +102,11 @@ export default function TugasPage({ tugasAwal = [], userId: userIdProp }: any) {
     const res = await fetch("/api/tasks", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ household_id: householdId, judul }),
+      body: JSON.stringify({
+        household_id: householdId,
+        judul,
+        ...(userId ? { assignee_id: userId } : {}),
+      }),
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {

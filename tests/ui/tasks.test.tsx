@@ -19,6 +19,42 @@ test("milikku tanpa identitas tampilkan empty state khusus, bukan semua tugas", 
   expect(screen.queryByText("Cuci piring t2")).toBeNull();
   expect(screen.getByText(/belum bisa filter milikku/i)).not.toBeNull();
 });
+test("tugas baru langsung terlihat di tab Milikku", async () => {
+  const posted: any[] = [];
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (_url: any, init?: any) => {
+      if (init?.method === "POST") {
+        const body = JSON.parse(init.body);
+        posted.push(body);
+        return {
+          ok: true,
+          json: async () => ({
+            id: "n1",
+            judul: body.judul,
+            assignee_id: body.assignee_id ?? null,
+            status: "todo",
+          }),
+        };
+      }
+      return { ok: true, json: async () => [] };
+    })
+  );
+  try {
+    render(
+      <HouseholdProvider initial={{ id: "h1", userId: "u1" }}>
+        <TugasPage tugasAwal={[]} />
+      </HouseholdProvider>
+    );
+    await screen.findByText(/belum ada tugas/i);
+    fireEvent.change(screen.getByLabelText(/judul tugas/i), { target: { value: "Sapu" } });
+    fireEvent.click(screen.getByText(/tambah tugas/i));
+    expect(await screen.findByText("Sapu")).not.toBeNull();
+    expect(posted[0]).toMatchObject({ household_id: "h1", assignee_id: "u1" });
+  } finally {
+    vi.unstubAllGlobals();
+  }
+});
 test("gagal muat tampilkan pesan error, bukan empty state", async () => {
   vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
   try {
