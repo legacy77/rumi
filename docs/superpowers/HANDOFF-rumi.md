@@ -15,7 +15,11 @@ MVP Phase 1 SELESAI di branch `rumi-mvp-phase-1` (10/10 tasks + build wave + pre
 ## Rulings (ringkas — detail di git history, workspace SDD sudah dihapus)
 - Scaffold via temp-dir (non-empty); 0002 own-read; 0003 creator-admin-insert; OAuth callback route; 0004 invites + serumah-read + service-role join; shopping-regex adaptasi diterima; Milikku-identity via /api/me (Task 9); build-green wave; 0005 RLS hardening + 6-item pre-pilot wave; hygiene batch (hooks/dates/404) deferred.
 
-## SEBELUM PILOT — wajib (dari final review)
+## Koneksi Supabase (project baru 2026-10-04)
+- Project: `orucqwwgygevqctuqfjs` (project lama `rosdradeohdbtsjlydbc` ditinggalkan — PostgREST-nya macet total/PGRST205 semua tabel, tiket support alternatif).
+- Diterapkan: migrasi 0001–0005 + `drop_recursive_memberships_policy` + `rumi_perf_indexes`; 8 tabel RLS on; PostgREST 200 (anon empty, benar).
+- Advisors: 1 WARN `rls_auto_enable()` SECURITY DEFINER milik fitur automatic-RLS Supabase — dibiarkan (bukan kode kita).
+- Wajib di project BARU: `SUPABASE_SERVICE_ROLE_KEY` baru → `.env.local` + hosting; Google provider: callback URL baru `https://orucqwwgygevqctuqfjs.supabase.co/auth/v1/callback` di Google Console + enable di dashboard + Site/redirect URL (localhost + produksi).
 1. ~~Link Supabase project → apply migrations 0001–0005~~ SELESAI 2026-10-04: 0001–0005 + index (`rumi_perf_indexes`, 7 index) teraplikasi di `rosdradeohdbtsjlydbc`; 8 tabel RLS aktif; advisors: 2 WARN pra-eksis milik app travel (`get_trip_by_invite` SECURITY DEFINER — bukan RUMI, jangan disentuh) + leaked-password-protection disarankan aktif via dashboard.
 2. `.env.local` terisi (gitignored, aman). Masih butuh: `SUPABASE_SERVICE_ROLE_KEY` (server-only, untuk invite accept) + aktifkan Google provider di dashboard Auth (untuk login Google).
 3. Uji manual 2–3 keluarga: register → buat rumah → invite/kode kedaluwarsa → CRUD tugas/tagihan/belanja/jadwal → curl lintas-rumah harus 403 → dashboard/reminder/.ics → mode pesawat → Add-to-Home-Screen Android + iOS.
