@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import AttentionCard from "@/components/AttentionCard";
-import BottomNav from "@/components/BottomNav";
 import { useHousehold } from "@/lib/household-context";
 import { createClient } from "@/lib/supabase/client";
 
@@ -27,6 +26,10 @@ export default function Dashboard({ urgent = null, counts = null }: any) {
   const [belanja, setBelanja] = useState<any[]>([]);
   const [jadwal, setJadwal] = useState<any[]>([]);
   const [gagalMuat, setGagalMuat] = useState(false);
+  const [daftar, setDaftar] = useState<any[]>([]);
+  const [nama, setNama] = useState("");
+  const [buatGagal, setBuatGagal] = useState<string | null>(null);
+  const [buatSibuk, setBuatSibuk] = useState(false);
 
   useEffect(() => {
     if (!householdId) {
@@ -95,6 +98,53 @@ export default function Dashboard({ urgent = null, counts = null }: any) {
     };
   }, [householdId]);
 
+  // Daftar rumah ikut dimuat ulang tiap householdId berubah (mis. habis bikin rumah baru).
+  useEffect(() => {
+    let batal = false;
+    (async () => {
+      try {
+        const r = await fetch("/api/households");
+        const d = r.ok ? await r.json() : [];
+        if (batal || !Array.isArray(d)) return;
+        setDaftar(
+          d
+            .map((m: any) => ({ id: m?.households?.id, nama: m?.households?.nama, role: m?.role }))
+            .filter((h: any) => h.id)
+        );
+      } catch {
+        // Abaikan — daftar rumah bukan data kritis dasbor.
+      }
+    })();
+    return () => {
+      batal = true;
+    };
+  }, [householdId]);
+
+  async function buatRumah() {
+    const v = nama.trim();
+    if (!v) {
+      setBuatGagal("Nama rumah wajib diisi");
+      return;
+    }
+    setBuatSibuk(true);
+    setBuatGagal(null);
+    try {
+      const r = await fetch("/api/households", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ nama: v }),
+      });
+      if (!r.ok) throw new Error("gagal");
+      const rumah = await r.json();
+      setNama("");
+      ctx?.switchHousehold?.({ id: rumah.id, nama: rumah.nama, role: "admin" });
+    } catch {
+      setBuatGagal("Gagal buat rumah, coba lagi ya");
+    } finally {
+      setBuatSibuk(false);
+    }
+  }
+
   const hariIni = tanggalLokal(new Date());
   const tigaHariLagi = tanggalLokal(new Date(Date.now() + 3 * 24 * 3600 * 1000));
 
@@ -135,6 +185,41 @@ export default function Dashboard({ urgent = null, counts = null }: any) {
   return (
     <div>
       <h1>Beranda</h1>
+      {daftar.length >= 1 && (
+        <label>
+          Pindah rumah
+          <select
+            aria-label="Pindah rumah"
+            value={householdId ?? ""}
+            onChange={(e) => {
+              const pilih = daftar.find((h: any) => h.id === e.target.value);
+              if (pilih) ctx?.switchHousehold?.(pilih);
+            }}
+          >
+            {!householdId && <option value="">Pilih rumah</option>}
+            {daftar.map((h: any) => (
+              <option key={h.id} value={h.id}>
+                {h.nama}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
+      {!householdId && !gagalMuat && (
+        <section>
+          <p>Belum ada rumah aktif, bikin rumah pertamamu dulu ya</p>
+          <input
+            aria-label="Nama rumah"
+            value={nama}
+            onChange={(e) => setNama(e.target.value)}
+            placeholder="Nama rumah, mis. Rumah Tebet"
+          />
+          <button onClick={buatRumah} disabled={buatSibuk}>
+            Buat rumah
+          </button>
+          {buatGagal && <p>{buatGagal}</p>}
+        </section>
+      )}
       {hero ? (
         <AttentionCard text={hero.text} sisa={sisa} />
       ) : (
@@ -159,7 +244,6 @@ export default function Dashboard({ urgent = null, counts = null }: any) {
         </a>
       </section>
       {gagalMuat && <p>Gagal memuat ringkasan, coba lagi ya</p>}
-      <BottomNav />
     </div>
   );
 }
