@@ -1,6 +1,7 @@
 /**
  * PageHeader — judul halaman + deskripsi singkat + slot aksi.
- * Memberi ritme editorial yang konsisten di semua halaman utama.
+ * Memberi ritme editorial ala buku sketsa: garis tinta tebal di bawah judul
+ * dan coretan kecil sebagai penanda tangan visual.
  */
 export default function PageHeader({
   title,
@@ -12,13 +13,17 @@ export default function PageHeader({
   action?: React.ReactNode;
 }) {
   return (
-    <header className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-5">
+    <header className="flex flex-wrap items-end justify-between gap-4 border-b-2 border-ink pb-5">
       <div className="min-w-0">
         <h1 className="text-2xl font-semibold tracking-tight text-ink sm:text-[1.75rem]">
           {title}
         </h1>
+        <span
+          aria-hidden="true"
+          className="mt-1.5 block h-1 w-12 rounded-full bg-terracotta"
+        />
         {description ? (
-          <p className="mt-1 text-sm text-muted">{description}</p>
+          <p className="mt-2 text-sm text-muted">{description}</p>
         ) : null}
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}

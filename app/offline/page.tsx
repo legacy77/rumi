@@ -1,3 +1,5 @@
+import DoodleImage from "@/components/DoodleImage";
+
 export default function Offline() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-cream px-6 py-12 text-ink">
@@ -8,8 +10,9 @@ export default function Offline() {
         <h1 className="mt-3 text-4xl font-bold leading-[1.05] tracking-tight">
           Kamu lagi offline...
         </h1>
+        <span aria-hidden="true" className="mt-2 block h-1 w-12 rounded-full bg-terracotta" />
 
-        <div className="mt-8 rounded-2xl border border-line bg-surface p-6 shadow-quiet sm:p-8">
+        <div className="rumi-card mt-8 bg-white p-6 sm:p-8">
           <div className="flex items-center gap-3">
             <span
               aria-hidden="true"

@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 
 /**
- * Skeleton — blok pemuatan berbentuk tata letak.
+ * Skeleton — blok pemuatan berbentuk tata letak ala sketsa.
  * Diredupkan lembut lewat opacity + denyut halus (aman untuk reduced-motion,
  * lihat app/globals.css). `silent` menyembunyikan dari pembaca layar agar
  * hanya satu status hidup yang diumumkan di level halaman.
@@ -18,7 +18,7 @@ export function Skeleton({
   return (
     <div
       aria-hidden={silent || undefined}
-      className={`animate-pulse rounded-md bg-ink/[0.08] ${className}`}
+      className={`animate-pulse rounded-blob-sm bg-ink/[0.09] ${className}`}
       style={style}
     />
   );
@@ -35,7 +35,7 @@ export function SkeletonLine({
   return <Skeleton className={`h-3.5 ${className}`} style={{ width: w }} />;
 }
 
-/** Kartu skeleton bergaris tipis, dipakai untuk daftar tugas/tagihan/agenda. */
+/** Kartu skeleton bergaris tinta tipis, dipakai untuk daftar tugas/tagihan/agenda. */
 export function SkeletonCard({
   children,
   className = "",
@@ -44,9 +44,7 @@ export function SkeletonCard({
   className?: string;
 }) {
   return (
-    <div
-      className={`rounded-xl border border-line bg-white p-4 ${className}`}
-    >
+    <div className={`rumi-card-alt rounded-blob-sm border-2 border-ink/15 bg-white p-4 ${className}`}>
       {children ?? (
         <div className="flex items-center gap-3">
           <Skeleton className="h-5 w-5 shrink-0 rounded-full" />

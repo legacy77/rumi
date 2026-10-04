@@ -2,6 +2,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Skeleton, SkeletonLine } from "@/components/Skeleton";
+import DoodleImage from "@/components/DoodleImage";
 
 type Tahap = "memuat" | "sukses" | "kedaluwarsa" | "perluLogin" | "gagal";
 
@@ -66,8 +67,10 @@ function Gabung() {
         <h1 className="mt-3 text-4xl font-bold leading-[1.05] tracking-tight">
           Gabung Keluarga
         </h1>
+        <span aria-hidden="true" className="mt-2 block h-1 w-12 rounded-full bg-terracotta" />
+        <DoodleImage src="/doodle/keluarga.svg" className="mt-6 h-32" />
 
-        <div className="mt-8 rounded-2xl border border-line bg-surface p-6 shadow-quiet sm:p-8">
+        <div className="rumi-card mt-8 bg-white p-6 sm:p-8">
           <div className="flex items-center gap-3">
             {tahap === "memuat" ? (
               <span
@@ -98,7 +101,7 @@ function Gabung() {
           {tahap === "perluLogin" && (
             <a
               href={loginHref}
-              className="rumi-transition mt-6 inline-flex min-h-[44px] w-full items-center justify-center rounded-xl bg-terracotta px-4 py-3 text-base font-semibold text-[#2A211C] hover:brightness-95 active:brightness-90"
+              className="rumi-transition mt-6 inline-flex min-h-[44px] w-full items-center justify-center rounded-blob-sm border-2 border-ink bg-terracotta px-4 py-3 text-base font-semibold text-[#2A211C] shadow-doodle-sm hover:brightness-95 active:translate-y-px active:brightness-90"
             >
               Login dulu
             </a>
@@ -107,7 +110,7 @@ function Gabung() {
           {tahap === "sukses" && (
             <a
               href="/"
-              className="rumi-transition mt-6 inline-flex min-h-[44px] w-full items-center justify-center rounded-xl bg-terracotta px-4 py-3 text-base font-semibold text-[#2A211C] hover:brightness-95 active:brightness-90"
+              className="rumi-transition mt-6 inline-flex min-h-[44px] w-full items-center justify-center rounded-blob-sm border-2 border-ink bg-terracotta px-4 py-3 text-base font-semibold text-[#2A211C] shadow-doodle-sm hover:brightness-95 active:translate-y-px active:brightness-90"
             >
               Ke Beranda
             </a>
@@ -116,7 +119,7 @@ function Gabung() {
           {tahap === "gagal" && (
             <a
               href="/"
-              className="rumi-transition mt-6 inline-flex min-h-[44px] w-full items-center justify-center rounded-xl border border-line px-4 py-3 text-base font-semibold text-ink hover:bg-ink/[0.04] active:bg-ink/[0.08]"
+              className="rumi-transition mt-6 inline-flex min-h-[44px] w-full items-center justify-center rounded-blob-sm border-2 border-ink px-4 py-3 text-base font-semibold text-ink hover:bg-ink/[0.04] active:bg-ink/[0.08]"
             >
               Kembali ke Beranda
             </a>
@@ -142,7 +145,7 @@ function JoinSkeleton() {
       >
         <Skeleton className="h-3 w-40" />
         <Skeleton className="mt-4 h-10 w-2/3" />
-        <div className="mt-8 rounded-2xl border border-line bg-surface p-6 sm:p-8">
+        <div className="rumi-card mt-8 bg-white p-6 sm:p-8">
           <div className="flex items-center gap-3">
             <Skeleton className="h-2.5 w-2.5" style={{ borderRadius: "9999px" }} />
             <SkeletonLine w="28%" />

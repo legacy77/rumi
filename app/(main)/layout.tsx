@@ -72,15 +72,18 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   if (gagal) {
     return (
       <main className="min-h-screen bg-cream px-5 py-16 sm:px-8">
-        <div className="mx-auto max-w-md rounded-2xl border border-line bg-white p-6 text-center shadow-quiet">
-          <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-primary/12 text-lg" aria-hidden="true">
+        <div className="rumi-card mx-auto max-w-md p-6 text-center">
+          <div
+            className="mx-auto flex h-14 w-14 -rotate-3 items-center justify-center rounded-full border-2 border-ink bg-terracotta/15 text-2xl"
+            aria-hidden="true"
+          >
             ⌂
           </div>
           <h1 className="mt-4 text-lg font-semibold text-ink">Gagal memuat rumahmu, coba lagi ya</h1>
           <p className="mt-1 text-sm text-muted">Koneksi lagi ngambek. Santai, coba sekali lagi.</p>
           <button
             onClick={() => setUlangi((n) => n + 1)}
-            className="rumi-transition mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-primary px-5 text-sm font-semibold text-white hover:opacity-90 active:scale-[0.98] sm:w-auto"
+            className="rumi-transition mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-blob-sm border-2 border-ink bg-terracotta px-5 text-sm font-semibold text-white shadow-doodle-sm hover:opacity-90 active:translate-y-px sm:w-auto"
           >
             Coba lagi
           </button>
@@ -92,20 +95,20 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     return (
       <main className="min-h-screen bg-cream px-5 py-10 sm:px-8" role="status" aria-label="Menyiapkan rumah">
         <div className="mx-auto max-w-4xl animate-pulse space-y-8">
-          <header className="flex items-center gap-3 border-b border-line pb-6">
-            <div className="h-10 w-10 rounded-xl bg-primary/15" />
+          <header className="flex items-center gap-3 border-b-2 border-ink pb-6">
+            <div className="h-10 w-10 rounded-blob-sm bg-terracotta/20" />
             <div className="space-y-2">
               <div className="h-3 w-14 rounded bg-ink/10" />
               <div className="h-5 w-40 rounded bg-ink/10" />
             </div>
           </header>
           <div className="max-w-2xl space-y-4">
-            <div className="h-9 w-52 rounded bg-ink/10" />
+            <div className="h-9 w-52 rounded-blob-sm bg-ink/10" />
             <div className="h-4 w-72 max-w-full rounded bg-ink/[0.07]" />
           </div>
           <div className="grid gap-3 md:grid-cols-2">
             {Array.from({ length: 4 }, (_, i) => (
-              <div key={i} className="rounded-2xl border border-line bg-surface p-5">
+              <div key={i} className="rounded-blob border-2 border-ink/15 bg-surface p-5">
                 <div className="h-3 w-20 rounded bg-ink/[0.08]" />
                 <div className="mt-5 h-7 w-12 rounded bg-ink/[0.08]" />
                 <div className="mt-3 h-3 w-32 rounded bg-ink/[0.06]" />

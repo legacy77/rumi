@@ -8,8 +8,8 @@ export default function BillCard({ nama, nominal, jatuh_tempo, status, onPay }: 
   const lunas = status === "lunas";
   return (
     <div
-      className={`rounded-xl border border-line bg-white p-4 ${
-        lunas ? "" : "border-l-2 border-l-terracotta"
+      className={`rounded-blob-sm border-2 border-ink bg-white p-4 shadow-doodle-sm ${
+        lunas ? "" : "border-l-4 border-l-terracotta"
       }`}
     >
       <div className="flex items-baseline justify-between gap-3">

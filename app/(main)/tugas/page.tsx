@@ -117,7 +117,7 @@ export default function TugasPage({ tugasAwal = [], userId: userIdProp }: any) {
     <div className="space-y-6">
       <PageHeader title="Tugas" description="Siapa kerjakan apa, hari ini." />
 
-      <section aria-label="Tambah tugas">
+      <section aria-label="Tambah tugas" className="rumi-card bg-white p-4 sm:p-5">
         <div className="flex flex-col gap-3 sm:flex-row">
           <input
             aria-label="Judul tugas"
@@ -127,11 +127,11 @@ export default function TugasPage({ tugasAwal = [], userId: userIdProp }: any) {
             onKeyDown={(e) => {
               if (e.key === "Enter") tambah();
             }}
-            className="min-h-11 flex-1 rounded-xl border border-line bg-white px-4 text-sm text-ink placeholder:text-muted/70"
+            className="min-h-12 flex-1 rounded-blob-sm border-2 border-ink bg-cream px-4 text-sm text-ink placeholder:text-muted/70"
           />
           <button
             onClick={tambah}
-            className="rumi-transition inline-flex min-h-11 items-center justify-center rounded-xl bg-terracotta px-5 text-sm font-semibold text-white hover:opacity-90 active:scale-[0.98]"
+            className="rumi-transition inline-flex min-h-12 items-center justify-center rounded-blob-sm border-2 border-ink bg-terracotta px-5 text-sm font-semibold text-white shadow-doodle-sm hover:opacity-90 active:translate-y-px"
           >
             Tambah tugas
           </button>
@@ -139,7 +139,7 @@ export default function TugasPage({ tugasAwal = [], userId: userIdProp }: any) {
         {pesanTambah && <p className="mt-2 text-sm text-terracotta">{pesanTambah}</p>}
       </section>
 
-      <div role="tablist" aria-label="Filter tugas" className="flex gap-6 border-b border-line">
+      <div role="tablist" aria-label="Filter tugas" className="flex flex-wrap gap-2">
         {FILTERS.map((f) => {
           const on = filter === f.id;
           return (
@@ -148,24 +148,18 @@ export default function TugasPage({ tugasAwal = [], userId: userIdProp }: any) {
               role="tab"
               aria-selected={on}
               onClick={() => setFilter(f.id)}
-              className={`rumi-transition relative min-h-11 pb-2.5 text-sm ${
-                on ? "font-semibold text-ink" : "text-muted hover:text-ink"
+              className={`rumi-transition inline-flex min-h-12 items-center rounded-blob-sm border-2 border-ink px-4 text-sm ${
+                on ? "bg-ink font-semibold text-white shadow-doodle-sm" : "bg-white text-ink hover:bg-cream"
               }`}
             >
               {f.label}
-              <span
-                aria-hidden="true"
-                className={`absolute inset-x-0 -bottom-px h-0.5 rounded-full ${
-                  on ? "bg-terracotta" : "bg-transparent"
-                }`}
-              />
             </button>
           );
         })}
       </div>
 
       {identitasHilang && (
-        <p className="border-b border-hairline pb-4 text-sm text-muted">
+        <p className="rounded-blob-sm border-2 border-ink bg-surface px-4 py-3 text-sm text-muted">
           Masuk dulu ya biar filter Milikku dan ambil tugas jalan
         </p>
       )}
@@ -174,9 +168,9 @@ export default function TugasPage({ tugasAwal = [], userId: userIdProp }: any) {
         {memuat && !gagalMuat ? (
           <SkeletonList count={4} label="Memuat tugas" />
         ) : (
-          <ul className="divide-y divide-hairline border-y border-line">
+          <ul className="rumi-card divide-y divide-hairline overflow-hidden bg-white px-4">
             {tampil.map((t: any) => (
-              <li key={t.id} className="py-1">
+              <li key={t.id} className="rumi-row py-1 last:border-b-0">
                 <TaskRow
                   id={t.id}
                   judul={t.judul}
@@ -196,11 +190,14 @@ export default function TugasPage({ tugasAwal = [], userId: userIdProp }: any) {
         {!memuat && tampil.length === 0 && !gagalMuat && (
           filter === "milikku" && !userId ? (
             <div className="pt-4">
-              <EmptyState title="Belum bisa filter Milikku, masuk dulu ya" />
+              <EmptyState
+                title="Belum bisa filter Milikku, masuk dulu ya"
+                gambar="/doodle/santai.svg"
+              />
             </div>
           ) : (
             <div className="pt-4">
-              <EmptyState title="Belum ada tugas, santai dulu ya" />
+              <EmptyState title="Belum ada tugas, santai dulu ya" gambar="/doodle/santai.svg" />
             </div>
           )
         )}

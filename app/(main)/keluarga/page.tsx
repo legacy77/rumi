@@ -66,15 +66,15 @@ export default function KeluargaPage({ members: awal = [], myRole }: any) {
     <div className="space-y-8">
       <PageHeader title="Keluarga" description="Orang-orang yang berbagi rumah ini." />
 
-      <section aria-label="Anggota keluarga" className="max-w-3xl">
-        <div className="flex items-baseline justify-between border-b border-line pb-3">
+      <section aria-label="Anggota keluarga" className="max-w-3xl space-y-3">
+        <div className="flex items-baseline justify-between px-1">
           <h2 className="text-base font-semibold tracking-tight text-ink">Anggota keluarga</h2>
           {!memuat && !gagalMuat && <span className="text-xs tabular-nums text-muted">{members.length} anggota</span>}
         </div>
         {memuat ? (
-          <div role="status" aria-label="Memuat anggota keluarga" aria-busy="true" className="divide-y divide-hairline">
+          <div role="status" aria-label="Memuat anggota keluarga" aria-busy="true" className="rumi-card overflow-hidden">
             {Array.from({ length: 3 }, (_, i) => (
-              <div key={i} className="flex items-center justify-between gap-4 py-5">
+              <div key={i} className="rumi-row flex items-center justify-between gap-4 px-5 py-5 last:border-0">
                 <div className="space-y-2">
                   <Skeleton className="h-4 w-32" />
                   <Skeleton className="h-3 w-16" />
@@ -84,19 +84,19 @@ export default function KeluargaPage({ members: awal = [], myRole }: any) {
             ))}
           </div>
         ) : gagalMuat ? (
-          <div className="pt-5"><ErrorState text="Gagal memuat anggota keluarga, coba lagi ya" /></div>
+          <div><ErrorState text="Gagal memuat anggota keluarga, coba lagi ya" /></div>
         ) : members.length === 0 ? (
-          <div className="pt-5"><EmptyState title="Belum ada anggota keluarga" detail="Undang orang serumah lewat link di bawah." /></div>
+          <div><EmptyState gambar="/doodle/keluarga.svg" title="Belum ada anggota keluarga" detail="Undang orang serumah lewat link di bawah." /></div>
         ) : (
-          <ul className="divide-y divide-hairline">
+          <ul className="rumi-card rumi-card-alt overflow-hidden">
             {members.map((m: any) => (
-              <li key={m.id ?? m.nama} className="flex min-h-16 flex-wrap items-center justify-between gap-x-4 gap-y-1 py-3">
+              <li key={m.id ?? m.nama} className="rumi-row flex min-h-16 flex-wrap items-center justify-between gap-x-4 gap-y-1 px-5 py-3 last:border-0">
                 <div className="min-w-0">
                   <p className="break-words text-sm font-medium text-ink">{m.nama}</p>
                   <p className="mt-0.5 text-xs capitalize text-muted">{m.role}</p>
                 </div>
                 {role === "admin" && m.role !== "admin" && (
-                  <button type="button" className="min-h-11 rounded-lg px-3 text-sm text-muted hover:text-ink">Keluarkan</button>
+                  <button type="button" className="rumi-transition min-h-11 rounded-blob-sm border-2 border-ink bg-surface px-3 text-sm text-muted shadow-doodle-sm hover:text-ink">Keluarkan</button>
                 )}
               </li>
             ))}

@@ -41,7 +41,7 @@ function TombolKalender({ onKlik }: { onKlik: () => void }) {
     <button
       type="button"
       onClick={onKlik}
-      className="rumi-transition inline-flex min-h-11 shrink-0 items-center rounded-lg px-3 text-sm font-medium text-terracotta hover:opacity-80"
+      className="rumi-transition inline-flex min-h-11 shrink-0 items-center rounded-blob-sm border-2 border-ink bg-surface px-3 text-sm font-medium text-terracotta shadow-doodle-sm hover:opacity-90 active:translate-y-px"
     >
       Tambah ke Kalender HP
     </button>
@@ -159,16 +159,16 @@ export default function PengingatPage({ awal = null }: any) {
     return (
       <div className="space-y-8">
         <PageHeader title="Pengingat" description="Yang jatuh tempo hari ini dan yang kelewat." />
-        <div role="status" aria-label="Memuat pengingat" aria-busy="true" className="space-y-10">
+        <div role="status" aria-label="Memuat pengingat" aria-busy="true" className="space-y-6">
           {[0, 1].map((s) => (
-            <div key={s}>
-              <div className="flex items-baseline justify-between border-b border-line pb-3">
+            <div key={s} className="rumi-card rumi-card-alt overflow-hidden">
+              <div className="rumi-row flex items-baseline justify-between px-5 pb-3 pt-4">
                 <Skeleton className="h-5 w-28" />
                 <Skeleton className="h-4 w-10" />
               </div>
-              <div className="divide-y divide-hairline">
+              <div>
                 {Array.from({ length: 3 }, (_, i) => (
-                  <div key={i} className="flex items-center justify-between gap-4 py-4">
+                  <div key={i} className="rumi-row flex items-center justify-between gap-4 px-5 py-4 last:border-0">
                     <div className="flex-1 space-y-2">
                       <Skeleton className="h-4 w-2/3" />
                       <Skeleton className="h-3 w-1/3" />
@@ -190,25 +190,26 @@ export default function PengingatPage({ awal = null }: any) {
 
       {kosongSemua && !gagalMuat ? (
         <EmptyState
+          gambar="/doodle/santai.svg"
           title="Belum ada pengingat, santai dulu ya"
           detail="Tugas, tagihan, dan agenda yang mendesak bakal muncul di sini."
         />
       ) : (
         <>
-          <section aria-label="Hari ini">
-            <div className="flex items-baseline justify-between border-b border-line pb-3">
+          <section aria-label="Hari ini" className="space-y-3">
+            <div className="flex items-baseline justify-between px-1">
               <h2 className="text-base font-semibold tracking-tight text-ink">Hari ini</h2>
               <span className="text-xs tabular-nums text-muted">{hitungHariIni} pengingat</span>
             </div>
-            <ul className="divide-y divide-hairline">
+            <ul className="rumi-card overflow-hidden">
               {tugasHariIni.map((t: any) => (
-                <li key={`tugas-${t.id}`} className="flex items-center justify-between gap-4 py-2">
+                <li key={`tugas-${t.id}`} className="rumi-row flex items-center justify-between gap-4 px-5 py-2 last:border-0">
                   <p className="min-w-0 flex-1 py-2 text-sm text-ink">Tugas: {t.judul}</p>
                   <TombolKalender onKlik={() => kalenderTugas(t)} />
                 </li>
               ))}
               {tagihanH3.map((b: any) => (
-                <li key={`tagihan-${b.id}`} className="flex items-center justify-between gap-4 py-2">
+                <li key={`tagihan-${b.id}`} className="rumi-row flex items-center justify-between gap-4 px-5 py-2 last:border-0">
                   <p className="min-w-0 flex-1 py-2 text-sm text-ink">
                     Tagihan: {b.nama} · <span className="text-muted">{b.jatuh_tempo}</span>
                   </p>
@@ -216,7 +217,7 @@ export default function PengingatPage({ awal = null }: any) {
                 </li>
               ))}
               {jadwalHariIni.map((j: any) => (
-                <li key={`jadwal-${j.id}`} className="flex items-center justify-between gap-4 py-2">
+                <li key={`jadwal-${j.id}`} className="rumi-row flex items-center justify-between gap-4 px-5 py-2 last:border-0">
                   <p className="min-w-0 flex-1 py-2 text-sm text-ink">
                     Agenda: {j.judul} · <span className="text-muted">{j.mulai}</span>
                   </p>
@@ -225,27 +226,27 @@ export default function PengingatPage({ awal = null }: any) {
               ))}
             </ul>
             {!adaHariIni && !gagalMuat && (
-              <p className="py-4 text-sm text-muted">Nggak ada yang hari ini, santai dulu ya</p>
+              <p className="px-1 text-sm text-muted">Nggak ada yang hari ini, santai dulu ya</p>
             )}
           </section>
 
-          <section aria-label="Terlewat">
-            <div className="flex items-baseline justify-between border-b border-line pb-3">
+          <section aria-label="Terlewat" className="space-y-3">
+            <div className="flex items-baseline justify-between px-1">
               <h2 className="flex items-center gap-2 text-base font-semibold tracking-tight text-ink">
                 <span aria-hidden="true" className="inline-block h-1.5 w-1.5 rounded-full bg-terracotta" />
                 Terlewat
               </h2>
               <span className="text-xs tabular-nums text-muted">{hitungTerlewat} pengingat</span>
             </div>
-            <ul className="divide-y divide-hairline">
+            <ul className="rumi-card overflow-hidden">
               {tugasTerlewat.map((t: any) => (
-                <li key={`tugas-${t.id}`} className="flex items-center justify-between gap-4 py-2">
+                <li key={`tugas-${t.id}`} className="rumi-row flex items-center justify-between gap-4 px-5 py-2 last:border-0">
                   <p className="min-w-0 flex-1 py-2 text-sm text-ink">Tugas: {t.judul}</p>
                   <TombolKalender onKlik={() => kalenderTugas(t)} />
                 </li>
               ))}
               {tagihanTerlewat.map((b: any) => (
-                <li key={`tagihan-${b.id}`} className="flex items-center justify-between gap-4 py-2">
+                <li key={`tagihan-${b.id}`} className="rumi-row flex items-center justify-between gap-4 px-5 py-2 last:border-0">
                   <p className="min-w-0 flex-1 py-2 text-sm text-ink">
                     Tagihan: {b.nama} · <span className="text-muted">{b.jatuh_tempo}</span>
                   </p>
@@ -253,7 +254,7 @@ export default function PengingatPage({ awal = null }: any) {
                 </li>
               ))}
               {jadwalTerlewat.map((j: any) => (
-                <li key={`jadwal-${j.id}`} className="flex items-center justify-between gap-4 py-2">
+                <li key={`jadwal-${j.id}`} className="rumi-row flex items-center justify-between gap-4 px-5 py-2 last:border-0">
                   <p className="min-w-0 flex-1 py-2 text-sm text-ink">
                     Agenda: {j.judul} · <span className="text-muted">{j.mulai}</span>
                   </p>
@@ -262,7 +263,7 @@ export default function PengingatPage({ awal = null }: any) {
               ))}
             </ul>
             {!adaTerlewat && !gagalMuat && (
-              <p className="py-4 text-sm text-muted">Nggak ada yang terlewat, mantap</p>
+              <p className="px-1 text-sm text-muted">Nggak ada yang terlewat, mantap</p>
             )}
           </section>
         </>

@@ -13,9 +13,10 @@ const ITEMS = [
 ];
 
 /**
- * DesktopNav — sidebar tetap untuk layar lebar (≥ lg).
+ * DesktopNav — sidebar kertas untuk layar lebar (≥ lg).
  * Sengaja berbeda dari BottomNav (mobile) agar tata letak desktop terasa
- * disengaja, bukan mobile yang ditarik melebar.
+ * disengaja, bukan mobile yang ditarik melebar. Panel kertas, border tinta 2px,
+ * tautan aktif berupa coretan terakota di tepi kiri.
  */
 export default function DesktopNav() {
   const household = useHousehold();
@@ -27,8 +28,8 @@ export default function DesktopNav() {
 
   return (
     <aside className="hidden w-56 shrink-0 lg:block">
-      <div className="sticky top-10">
-        <div className="flex items-center gap-2.5 px-2">
+      <div className="sticky top-10 rounded-blob border-2 border-ink bg-white p-4 shadow-doodle">
+        <div className="flex items-center gap-2.5 px-1">
           <span
             aria-hidden="true"
             className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink text-sm font-semibold text-cream"
@@ -41,7 +42,7 @@ export default function DesktopNav() {
           </div>
         </div>
 
-        <nav aria-label="Navigasi utama desktop" className="mt-6 flex flex-col gap-0.5">
+        <nav aria-label="Navigasi utama desktop" className="mt-6 flex flex-col gap-1">
           {ITEMS.map((it) => {
             const on = aktif(it.href);
             return (
@@ -49,12 +50,18 @@ export default function DesktopNav() {
                 key={it.href}
                 href={it.href}
                 aria-current={on ? "page" : undefined}
-                className={`rumi-transition flex min-h-11 items-center rounded-lg px-3 text-sm ${
+                className={`rumi-transition relative flex min-h-11 items-center rounded-blob-sm px-3 text-sm ${
                   on
-                    ? "bg-white font-semibold text-ink shadow-quiet"
-                    : "text-muted hover:bg-white/70 hover:text-ink"
+                    ? "bg-cream font-semibold text-ink"
+                    : "text-muted hover:bg-cream/70 hover:text-ink"
                 }`}
               >
+                <span
+                  aria-hidden="true"
+                  className={`mr-2.5 h-2 w-2 shrink-0 rounded-full ${
+                    on ? "bg-terracotta" : "bg-transparent"
+                  }`}
+                />
                 {it.label}
               </a>
             );
@@ -62,7 +69,7 @@ export default function DesktopNav() {
         </nav>
 
         {role ? (
-          <p className="mt-6 border-t border-line px-3 pt-4 text-xs capitalize text-muted">
+          <p className="mt-6 border-t-2 border-ink/15 px-1 pt-4 text-xs capitalize text-muted">
             Masuk sebagai {role}
           </p>
         ) : null}

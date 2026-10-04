@@ -124,9 +124,9 @@ export default function TagihanPage({ tagihanAwal = [] }: any) {
         <PageHeader title="Tagihan" description="Catat yang wajib dibayar, lunasi yang mendesak." />
         <div role="status" aria-label="Memuat tagihan" aria-busy="true" className="space-y-3">
           <Skeleton className="h-5 w-32" />
-          <Skeleton className="h-24 w-full rounded-xl" />
-          <Skeleton className="h-24 w-full rounded-xl" />
-          <Skeleton className="h-24 w-full rounded-xl" />
+          <Skeleton className="h-24 w-full rounded-blob" />
+          <Skeleton className="h-24 w-full rounded-blob" />
+          <Skeleton className="h-24 w-full rounded-blob" />
         </div>
       </div>
     );
@@ -143,7 +143,7 @@ export default function TagihanPage({ tagihanAwal = [] }: any) {
         }
       />
 
-      <section aria-label="Tambah tagihan" className="rounded-2xl border border-line bg-surface px-5 py-5 sm:px-6">
+      <section aria-label="Tambah tagihan" className="rumi-card bg-white px-5 py-5 sm:px-6">
         <h2 className="text-sm font-semibold text-ink">Tagihan baru</h2>
         <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_10rem_11rem_auto]">
           <div>
@@ -154,7 +154,7 @@ export default function TagihanPage({ tagihanAwal = [] }: any) {
               aria-label="Nama tagihan"
               value={nama}
               onChange={(e) => setNama(e.target.value)}
-              className="min-h-11 w-full rounded-xl border border-line bg-white px-4 text-sm text-ink placeholder:text-muted/70"
+              className="min-h-12 w-full rounded-blob-sm border-2 border-ink bg-cream px-4 text-sm text-ink placeholder:text-muted/70"
             />
           </div>
           <div>
@@ -166,7 +166,7 @@ export default function TagihanPage({ tagihanAwal = [] }: any) {
               inputMode="numeric"
               value={nominal}
               onChange={(e) => setNominal(e.target.value)}
-              className="min-h-11 w-full rounded-xl border border-line bg-white px-4 text-sm tabular-nums text-ink placeholder:text-muted/70"
+              className="min-h-12 w-full rounded-blob-sm border-2 border-ink bg-cream px-4 text-sm tabular-nums text-ink placeholder:text-muted/70"
             />
           </div>
           <div>
@@ -177,13 +177,13 @@ export default function TagihanPage({ tagihanAwal = [] }: any) {
               aria-label="Jatuh tempo"
               value={jatuhTempo}
               onChange={(e) => setJatuhTempo(e.target.value)}
-              className="min-h-11 w-full rounded-xl border border-line bg-white px-4 text-sm text-ink"
+              className="min-h-12 w-full rounded-blob-sm border-2 border-ink bg-cream px-4 text-sm text-ink"
             />
           </div>
           <button
             onClick={tambah}
             disabled={sibuk}
-            className="rumi-transition inline-flex min-h-11 items-center justify-center rounded-xl bg-terracotta px-5 text-sm font-semibold text-white hover:opacity-90 active:scale-[0.98]"
+            className="rumi-transition inline-flex min-h-12 items-center justify-center rounded-blob-sm border-2 border-ink bg-terracotta px-5 text-sm font-semibold text-white shadow-doodle-sm hover:opacity-90 active:translate-y-px"
           >
             Tambah tagihan
           </button>
@@ -198,11 +198,11 @@ export default function TagihanPage({ tagihanAwal = [] }: any) {
           </div>
           <ul className="mt-3 space-y-3">
             {mendesak.map((b: any) => (
-              <li key={b.id} className="flex flex-col gap-1">
+              <li key={b.id} className="rumi-card-alt rounded-blob border-2 border-ink bg-surface p-3 shadow-doodle-sm">
                 <BillCard nama={b.nama} nominal={b.nominal} jatuh_tempo={b.jatuh_tempo} status={b.status} onPay={() => bayar(b)} />
-                <label className="rumi-transition inline-flex min-h-11 w-fit cursor-pointer items-center gap-2 px-1 text-xs text-muted hover:text-ink">
+                <label className="rumi-transition inline-flex min-h-12 w-fit cursor-pointer items-center gap-2 px-1 text-xs text-muted hover:text-ink">
                   <input type="file" aria-label={`bukti-${b.id}`} onChange={(e) => pilihBukti(e, b)} className="sr-only" />
-                  <span aria-hidden="true" className="inline-block h-px w-5 bg-line" />
+                  <span aria-hidden="true" className="inline-block h-px w-5 bg-ink/40" />
                   Lampirkan bukti / tandai tanpa bukti
                 </label>
               </li>
@@ -212,14 +212,14 @@ export default function TagihanPage({ tagihanAwal = [] }: any) {
       )}
 
       <section aria-label="Daftar tagihan">
-        <div className="flex items-baseline justify-between gap-4 border-b border-line pb-2">
+        <div className="flex items-baseline justify-between gap-4 border-b-2 border-ink pb-2">
           <h2 className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">Semua tagihan</h2>
           <span className="text-xs tabular-nums text-muted">{sisanya.length} tagihan</span>
         </div>
         {sisanya.length > 0 ? (
           <ul className="mt-3 space-y-3">
             {sisanya.map((b: any) => (
-              <li key={b.id}>
+              <li key={b.id} className="rounded-blob border-2 border-ink bg-surface p-3 shadow-doodle-sm">
                 <BillCard nama={b.nama} nominal={b.nominal} jatuh_tempo={b.jatuh_tempo} status={b.status} onPay={() => bayar(b)} />
               </li>
             ))}
@@ -230,7 +230,11 @@ export default function TagihanPage({ tagihanAwal = [] }: any) {
       </section>
 
       {tagihan.length === 0 && !gagalMuat && (
-        <EmptyState title="Belum ada tagihan, santai dulu ya" detail="Tambah tagihan pertama di atas biar nggak ada yang kelewat." />
+        <EmptyState
+          title="Belum ada tagihan, santai dulu ya"
+          detail="Tambah tagihan pertama di atas biar nggak ada yang kelewat."
+          gambar="/doodle/santai.svg"
+        />
       )}
       {gagalMuat && <ErrorState text="Gagal memuat tagihan, coba lagi ya" />}
       {pesan && <p role="status" className="text-sm text-terracotta">{pesan}</p>}

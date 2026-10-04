@@ -138,7 +138,7 @@ export default function BelanjaPage({ items = [], itemsAwal }: any) {
     <div className="space-y-6">
       <PageHeader title="Belanja" description="Daftar belanjaan rumah." />
 
-      <section aria-label="Tambah barang">
+      <section aria-label="Tambah barang" className="rumi-card bg-white p-4 sm:p-5">
         <div className="flex flex-col gap-3 sm:flex-row">
           <input
             aria-label="Nama barang"
@@ -148,11 +148,11 @@ export default function BelanjaPage({ items = [], itemsAwal }: any) {
             onKeyDown={(e) => {
               if (e.key === "Enter") tambah();
             }}
-            className="min-h-11 flex-1 rounded-xl border border-line bg-white px-4 text-sm text-ink placeholder:text-muted/70"
+            className="min-h-12 flex-1 rounded-blob-sm border-2 border-ink bg-cream px-4 text-sm text-ink placeholder:text-muted/70"
           />
           <button
             onClick={tambah}
-            className="rumi-transition inline-flex min-h-11 items-center justify-center rounded-xl bg-terracotta px-5 text-sm font-semibold text-white hover:opacity-90 active:scale-[0.98]"
+            className="rumi-transition inline-flex min-h-12 items-center justify-center rounded-blob-sm border-2 border-ink bg-terracotta px-5 text-sm font-semibold text-white shadow-doodle-sm hover:opacity-90 active:translate-y-px"
           >
             Tambah barang
           </button>
@@ -161,11 +161,11 @@ export default function BelanjaPage({ items = [], itemsAwal }: any) {
       </section>
 
       {(adaPerlu || adaDibeli) && (
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+        <div className="flex flex-wrap items-center gap-2">
           {adaPerlu && (
             <button
               onClick={tandaiSemua}
-              className="rumi-transition inline-flex min-h-11 items-center text-sm font-medium text-terracotta hover:opacity-80"
+              className="rumi-transition inline-flex min-h-12 items-center rounded-blob-sm border-2 border-ink bg-ink px-4 text-sm font-medium text-white shadow-doodle-sm hover:opacity-90 active:translate-y-px"
             >
               Tandai semua dibeli
             </button>
@@ -173,7 +173,7 @@ export default function BelanjaPage({ items = [], itemsAwal }: any) {
           {adaDibeli && (
             <button
               onClick={hapusDibeli}
-              className="rumi-transition inline-flex min-h-11 items-center text-sm font-medium text-muted hover:text-ink"
+              className="rumi-transition inline-flex min-h-12 items-center rounded-blob-sm border-2 border-ink bg-white px-4 text-sm font-medium text-ink hover:bg-cream active:translate-y-px"
             >
               Hapus yang dibeli
             </button>
@@ -185,12 +185,12 @@ export default function BelanjaPage({ items = [], itemsAwal }: any) {
         {memuat && !gagalMuat ? (
           <SkeletonList count={4} label="Memuat belanja" />
         ) : (
-          <ul className="divide-y divide-hairline border-y border-line">
+          <ul className="rumi-card divide-y divide-hairline overflow-hidden bg-white px-4">
             {daftar.map((item: any, i: number) => {
               const dibeli = item.status === "dibeli";
               return (
-                <li key={item.id ?? `idx-${i}`}>
-                  <label className="flex min-h-12 cursor-pointer items-center gap-3 py-1">
+                <li key={item.id ?? `idx-${i}`} className="rumi-row last:border-b-0">
+                  <label className="flex min-h-14 cursor-pointer items-center gap-3 py-1">
                     <input
                       type="checkbox"
                       className="h-5 w-5 shrink-0 accent-[#D97757]"
@@ -205,7 +205,11 @@ export default function BelanjaPage({ items = [], itemsAwal }: any) {
                     >
                       {item.nama}
                     </span>
-                    <span className={`shrink-0 text-xs ${dibeli ? "text-muted" : "text-terracotta"}`}>
+                    <span
+                      className={`shrink-0 rounded-blob-sm border-2 px-2 py-0.5 text-xs ${
+                        dibeli ? "border-ink/20 text-muted" : "border-terracotta text-terracotta"
+                      }`}
+                    >
                       {dibeli ? "beres ✓" : "perlu"}
                     </span>
                   </label>
@@ -217,7 +221,7 @@ export default function BelanjaPage({ items = [], itemsAwal }: any) {
 
         {!memuat && daftar.length === 0 && !gagalMuat && (
           <div className="pt-4">
-            <EmptyState title="Belum ada barang, santai dulu ya" />
+            <EmptyState title="Belum ada barang, santai dulu ya" gambar="/doodle/belanja.svg" />
           </div>
         )}
         {gagalMuat && (

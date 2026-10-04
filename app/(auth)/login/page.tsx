@@ -6,6 +6,7 @@ import { safeNext } from "@/lib/auth-redirect";
 
 import { Suspense } from "react";
 import { Skeleton, SkeletonLine } from "@/components/Skeleton";
+import DoodleImage from "@/components/DoodleImage";
 
 function LoginContent() {
   const params = useSearchParams();
@@ -52,11 +53,13 @@ function LoginContent() {
         <h1 className="mt-3 text-4xl font-bold leading-[1.05] tracking-tight">
           Masuk dulu, yuk!
         </h1>
+        <span aria-hidden="true" className="mt-2 block h-1 w-12 rounded-full bg-terracotta" />
         <p className="mt-3 text-base leading-relaxed text-muted">
           Biar urusan rumah rapi bareng keluarga.
         </p>
+        <DoodleImage src="/doodle/santai.svg" className="mt-6 h-32" />
 
-        <div className="mt-8 rounded-2xl border border-line bg-surface p-6 shadow-quiet sm:p-8">
+        <div className="rumi-card mt-8 bg-white p-6 sm:p-8">
           {pesan && (
             <p
               role="status"
@@ -79,12 +82,12 @@ function LoginContent() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email kamu"
-                className="min-h-[44px] w-full rounded-xl border border-line bg-cream px-4 py-3 text-base text-ink placeholder:text-muted"
+                className="min-h-[44px] w-full rounded-blob-sm border-2 border-ink bg-cream px-4 py-3 text-base text-ink placeholder:text-muted"
               />
             </div>
             <button
               type="submit"
-              className="rumi-transition min-h-[44px] w-full rounded-xl bg-terracotta px-4 py-3 text-base font-semibold text-[#2A211C] hover:brightness-95 active:brightness-90"
+              className="rumi-transition min-h-[44px] w-full rounded-blob-sm border-2 border-ink bg-terracotta px-4 py-3 text-base font-semibold text-[#2A211C] shadow-doodle-sm hover:brightness-95 active:translate-y-px active:brightness-90"
             >
               Masuk pakai email
             </button>
@@ -100,7 +103,7 @@ function LoginContent() {
 
           <button
             onClick={loginGoogle}
-            className="rumi-transition min-h-[44px] w-full rounded-xl border border-line bg-transparent px-4 py-3 text-base font-semibold text-ink hover:bg-ink/[0.04] active:bg-ink/[0.08]"
+            className="rumi-transition min-h-[44px] w-full rounded-blob-sm border-2 border-ink bg-transparent px-4 py-3 text-base font-semibold text-ink hover:bg-ink/[0.04] active:bg-ink/[0.08]"
           >
             Masuk pakai Google
           </button>
@@ -126,11 +129,11 @@ function LoginSkeleton() {
         <Skeleton className="h-3 w-36" />
         <Skeleton className="mt-4 h-10 w-3/4" />
         <SkeletonLine w="60%" className="mt-3" />
-        <div className="mt-8 rounded-2xl border border-line bg-surface p-6 sm:p-8">
+        <div className="rumi-card mt-8 bg-white p-6 sm:p-8">
           <SkeletonLine w="30%" />
-          <Skeleton className="mt-3 h-[44px] w-full rounded-xl" />
-          <Skeleton className="mt-4 h-[44px] w-full rounded-xl" />
-          <Skeleton className="mt-4 h-[44px] w-full rounded-xl" />
+          <Skeleton className="mt-3 h-[44px] w-full rounded-blob-sm" />
+          <Skeleton className="mt-4 h-[44px] w-full rounded-blob-sm" />
+          <Skeleton className="mt-4 h-[44px] w-full rounded-blob-sm" />
         </div>
       </div>
     </main>

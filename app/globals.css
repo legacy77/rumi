@@ -8,6 +8,8 @@
   --rumi-ink: #382F2A;
   --rumi-muted: #786B60;
   --rumi-surface: #FBF7F1;
+  --rumi-clay: #EFE3D5;
+  --rumi-sand: #E6CBB2;
   --rumi-line: rgba(56, 47, 42, 0.12);
   --rumi-hairline: rgba(56, 47, 42, 0.08);
 }
@@ -20,6 +22,11 @@
   body {
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
+    /* Kertas hangat dengan titik halus ala buku sketsa. */
+    background-color: var(--rumi-cream);
+    background-image: radial-gradient(var(--rumi-line) 0.5px, transparent 0.5px);
+    background-size: 22px 22px;
+    background-position: -11px -11px;
   }
 
   /* Fokus keyboard yang jelas & konsisten di seluruh aplikasi. */
@@ -42,6 +49,29 @@
     transition-property: transform, opacity;
     transition-duration: 150ms;
     transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  /* Panel kertas: isian krem terang di atas kanvas titik. */
+  .rumi-paper {
+    background-color: var(--rumi-surface);
+  }
+
+  /* Kartu sketsa: border tinta tebal + sudut besar tak seragam. */
+  .rumi-card {
+    border: 2px solid var(--rumi-ink);
+    border-radius: 1.6rem 1.15rem 1.6rem 1.15rem;
+    background-color: #fff;
+    box-shadow: 4px 4px 0 rgba(56, 47, 42, 0.16);
+  }
+
+  /* Varian sudut untuk menghindari keseragaman kotak. */
+  .rumi-card-alt {
+    border-radius: 1.15rem 1.6rem 1.15rem 1.6rem;
+  }
+
+  /* Baris daftar dengan garis tinta tipis. */
+  .rumi-row {
+    border-bottom: 1.5px solid var(--rumi-hairline);
   }
 }
 

@@ -124,9 +124,9 @@ export default function JadwalPage({ jadwalAwal = [] }: any) {
     return (
       <div className="space-y-8">
         <PageHeader title="Jadwal" description="Agenda rumah biar nggak tabrakan." />
-        <div role="status" aria-label="Memuat jadwal" aria-busy="true" className="space-y-1">
+        <div role="status" aria-label="Memuat jadwal" aria-busy="true" className="rumi-card overflow-hidden">
           {Array.from({ length: 4 }, (_, i) => (
-            <div key={i} className="flex items-center justify-between gap-4 border-b border-hairline py-4">
+            <div key={i} className="rumi-row flex items-center justify-between gap-4 px-5 py-4 last:border-0">
               <div className="flex-1 space-y-2">
                 <Skeleton className="h-4 w-48 max-w-full" />
                 <Skeleton className="h-3 w-32" />
@@ -146,7 +146,7 @@ export default function JadwalPage({ jadwalAwal = [] }: any) {
         description={jadwal.length > 0 ? `${jadwal.length} agenda tercatat` : "Agenda rumah biar nggak tabrakan."}
       />
 
-      <section aria-label="Tambah agenda" className="rounded-2xl border border-line bg-surface px-5 py-5 sm:px-6">
+      <section aria-label="Tambah agenda" className="rumi-card rumi-card-alt bg-surface px-5 py-5 sm:px-6">
         <h2 className="text-sm font-semibold text-ink">Agenda baru</h2>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           <div className="sm:col-span-2">
@@ -157,7 +157,7 @@ export default function JadwalPage({ jadwalAwal = [] }: any) {
               aria-label="Judul agenda"
               value={judul}
               onChange={(e) => setJudul(e.target.value)}
-              className="min-h-11 w-full rounded-xl border border-line bg-white px-4 text-sm text-ink placeholder:text-muted/70"
+              className="min-h-11 w-full rounded-blob-sm border-2 border-ink bg-white px-4 text-sm text-ink placeholder:text-muted/70"
             />
           </div>
           <div>
@@ -168,7 +168,7 @@ export default function JadwalPage({ jadwalAwal = [] }: any) {
               aria-label="Mulai"
               value={mulai}
               onChange={(e) => setMulai(e.target.value)}
-              className="min-h-11 w-full rounded-xl border border-line bg-white px-4 text-sm text-ink"
+              className="min-h-11 w-full rounded-blob-sm border-2 border-ink bg-white px-4 text-sm text-ink"
             />
           </div>
           <div>
@@ -179,7 +179,7 @@ export default function JadwalPage({ jadwalAwal = [] }: any) {
               aria-label="Selesai"
               value={selesai}
               onChange={(e) => setSelesai(e.target.value)}
-              className="min-h-11 w-full rounded-xl border border-line bg-white px-4 text-sm text-ink"
+              className="min-h-11 w-full rounded-blob-sm border-2 border-ink bg-white px-4 text-sm text-ink"
             />
           </div>
           <div>
@@ -190,13 +190,13 @@ export default function JadwalPage({ jadwalAwal = [] }: any) {
               aria-label="Lokasi (opsional)"
               value={lokasi}
               onChange={(e) => setLokasi(e.target.value)}
-              className="min-h-11 w-full rounded-xl border border-line bg-white px-4 text-sm text-ink placeholder:text-muted/70"
+              className="min-h-11 w-full rounded-blob-sm border-2 border-ink bg-white px-4 text-sm text-ink placeholder:text-muted/70"
             />
           </div>
           <button
             onClick={tambah}
             disabled={sibuk}
-            className="rumi-transition inline-flex min-h-11 items-center justify-center rounded-xl bg-terracotta px-5 text-sm font-semibold text-white hover:opacity-90 active:scale-[0.98] sm:self-end"
+            className="rumi-transition inline-flex min-h-11 items-center justify-center rounded-blob-sm border-2 border-ink bg-terracotta px-5 text-sm font-semibold text-white shadow-doodle-sm hover:opacity-90 active:translate-y-px sm:self-end"
           >
             Tambah agenda
           </button>
@@ -207,13 +207,13 @@ export default function JadwalPage({ jadwalAwal = [] }: any) {
         <div className="space-y-7">
           {grup.map((g) => (
             <section key={g.kunci} aria-label={g.label}>
-              <div className="flex items-baseline justify-between gap-4 border-b border-line pb-2">
+              <div className="rounded-blob-sm border-2 border-ink bg-surface px-4 pb-2 pt-2 shadow-doodle-sm flex items-baseline justify-between gap-4">
                 <h2 className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">{g.label}</h2>
                 <span className="text-xs tabular-nums text-muted">{g.items.length} agenda</span>
               </div>
-              <ul className="divide-y divide-hairline">
+              <ul className="rumi-card mt-3 overflow-hidden">
                 {g.items.map((j: any) => (
-                  <li key={j.id} className="rumi-transition flex items-baseline justify-between gap-4 py-4">
+                  <li key={j.id} className="rumi-row rumi-transition flex items-baseline justify-between gap-4 px-5 py-4 last:border-0">
                     <div className="min-w-0">
                       <p className="truncate text-sm font-medium text-ink">{j.judul}</p>
                       <p className="mt-0.5 truncate text-xs text-muted">
@@ -225,7 +225,7 @@ export default function JadwalPage({ jadwalAwal = [] }: any) {
                     <button
                       onClick={() => hapus(j)}
                       aria-label={`Hapus ${j.judul}`}
-                      className="rumi-transition inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg px-3 text-xs font-medium text-muted hover:text-terracotta"
+                      className="rumi-transition inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-blob-sm border-2 border-ink bg-white px-3 text-xs font-medium text-muted shadow-doodle-sm hover:text-terracotta"
                     >
                       Hapus
                     </button>
@@ -238,7 +238,11 @@ export default function JadwalPage({ jadwalAwal = [] }: any) {
       )}
 
       {jadwal.length === 0 && !gagalMuat && (
-        <EmptyState title="Belum ada agenda, santai dulu ya" detail="Tambah agenda pertama di atas biar harimu rapi." />
+        <EmptyState
+          gambar="/doodle/santai.svg"
+          title="Belum ada agenda, santai dulu ya"
+          detail="Tambah agenda pertama di atas biar harimu rapi."
+        />
       )}
       {gagalMuat && <ErrorState text="Gagal memuat jadwal, coba lagi ya" />}
       {pesan && <p role="status" className="text-sm text-terracotta">{pesan}</p>}
