@@ -5,7 +5,7 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     caches
       .open(CACHE)
-      .then((cache) => cache.addAll(["/", "/manifest.webmanifest"]))
+      .then((cache) => cache.addAll(["/", "/offline", "/manifest.webmanifest"]))
       .then(() => self.skipWaiting())
       .catch(() => {})
   );
@@ -27,7 +27,11 @@ self.addEventListener("fetch", (event) => {
   const { request } = event;
   if (request.method !== "GET") return;
   if (request.mode === "navigate") {
-    event.respondWith(fetch(request).catch(() => caches.match("/")));
+    event.respondWith(
+      fetch(request).catch(() =>
+        caches.match("/offline").then((hit) => hit || caches.match("/"))
+      )
+    );
     return;
   }
   event.respondWith(
