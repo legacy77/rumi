@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --rumi-primary: #D97757;
+  --rumi-cream: #F5EEE4;
+  --rumi-ink: #382F2A;
+  --rumi-muted: #786B60;
+}
