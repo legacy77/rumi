@@ -1,0 +1,4 @@
+create table invites (id uuid primary key default gen_random_uuid(), household_id uuid references households(id) on delete cascade not null, code text unique not null, expires_at timestamptz not null, created_by uuid references auth.users(id));
+alter table invites enable row level security;
+create policy "admin kelola undangan" on invites for all using (exists (select 1 from memberships m where m.household_id = invites.household_id and m.user_id = auth.uid() and m.role = 'admin')) with check (exists (select 1 from memberships m where m.household_id = invites.household_id and m.user_id = auth.uid() and m.role = 'admin'));
+create policy "anggota baca serumah" on memberships for select using (exists (select 1 from memberships m where m.household_id = memberships.household_id and m.user_id = auth.uid() and m.status = 'active'));
