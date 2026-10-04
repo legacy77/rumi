@@ -15,6 +15,8 @@ describe("safeNext", () => {
   test("protokol-relative dan backslash ditolak", () => {
     expect(safeNext("//evil.example")).toBe("/");
     expect(safeNext("\\\\evil.example")).toBe("/");
+    expect(safeNext("\\evil.example")).toBe("/");
+    expect(safeNext("/join?code=a\\b")).toBe("/");
   });
 
   test("kosong/null jatuh kembali ke /", () => {

@@ -31,6 +31,7 @@ MVP Phase 1 SELESAI di branch `rumi-mvp-phase-1` (10/10 tasks + build wave + pre
    Pilot live 2026-10-04: rumah pertama tercipta via app dan terverifikasi di DB (admin, active). Alur buat-rumah closed-loop.
    Bug live 2026-10-04 (review Approved): Shift+F5 wajib — layout fetch sekali di mount (401 saat cookie belum sinkron) + SW cache-first JS basi. Fix: retry-once 401, force-dynamic /api/me+/api/households, refetch provider, SW bump rumi-v2 + network-first-fallback.
    Bug live 2026-10-04 (review Approved): /join 401 hanya teks tanpa aksi → user Incognito nyangkut; callback buang kode undangan. Fix: CTA login dengan next ter-encode, /login teruskan next ke emailRedirectTo+OAuth, callback safeNext (fail-closed /), test auth-callback-next.
+   Bug live 2026-10-04 (review Approved): magic-link tak pernah login — token di URL fragment (#access_token) tak sampai ke server route. Fix: /auth/callback jadi client page (setSession hash + exchange ?code= client-side), safeNext di lib/auth-redirect.ts.
 4. Catat pemakaian free-tier.
 
 ## Diketahui ditunda (bukan defect)
