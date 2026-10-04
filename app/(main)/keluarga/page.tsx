@@ -15,6 +15,8 @@ export default function KeluargaPage({ members: awal = [], myRole }: any) {
   const [memuat, setMemuat] = useState(false);
   const [gagalMuat, setGagalMuat] = useState(false);
   const [mengundang, setMengundang] = useState(false);
+  const [mengeluarkan, setMengeluarkan] = useState<string | null>(null);
+  const [gagalKeluarkan, setGagalKeluarkan] = useState("");
 
   useEffect(() => {
     if (awal.length > 0 || !householdId) return;
@@ -62,6 +64,29 @@ export default function KeluargaPage({ members: awal = [], myRole }: any) {
     }
   }
 
+  async function keluarkan(userId: string) {
+    if (!window.confirm("Keluarkan anggota ini dari rumah?")) return;
+    setGagalKeluarkan("");
+    setMengeluarkan(userId);
+    try {
+      const res = await fetch("/api/members", {
+        method: "DELETE",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ household_id: householdId, user_id: userId }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setGagalKeluarkan(data.error ?? "Gagal keluarkan anggota, coba lagi ya");
+        return;
+      }
+      setMembers((prev) => prev.filter((m: any) => (m.user_id ?? m.id ?? m.nama) !== userId));
+    } catch {
+      setGagalKeluarkan("Gagal keluarkan anggota, coba lagi ya");
+    } finally {
+      setMengeluarkan(null);
+    }
+  }
+
   return (
     <div className="space-y-8">
       <PageHeader title="Keluarga" description="Orang-orang yang berbagi rumah ini." />
@@ -96,12 +121,20 @@ export default function KeluargaPage({ members: awal = [], myRole }: any) {
                   <p className="mt-0.5 text-xs capitalize text-muted">{m.role}</p>
                 </div>
                 {role === "admin" && m.role !== "admin" && (
-                  <button type="button" className="rumi-transition min-h-11 rounded-blob-sm border-2 border-ink bg-surface px-3 text-sm text-muted shadow-doodle-sm hover:text-ink">Keluarkan</button>
+                  <button
+                    type="button"
+                    onClick={() => keluarkan(m.user_id ?? m.id ?? m.nama)}
+                    disabled={mengeluarkan === (m.user_id ?? m.id ?? m.nama)}
+                    className="rumi-transition min-h-11 rounded-blob-sm border-2 border-ink bg-surface px-3 text-sm text-muted shadow-doodle-sm hover:text-ink disabled:opacity-50"
+                  >
+                    {mengeluarkan === (m.user_id ?? m.id ?? m.nama) ? "mengeluarkan…" : "Keluarkan"}
+                  </button>
                 )}
               </li>
             ))}
           </ul>
         )}
+        {gagalKeluarkan && <div><ErrorState text={gagalKeluarkan} /></div>}
       </section>
 
       {role === "admin" && (
