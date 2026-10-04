@@ -2,36 +2,39 @@
 import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { safeNext } from "@/lib/auth-redirect";
 
 import { Suspense } from "react";
 
 function LoginContent() {
   const params = useSearchParams();
   const router = useRouter();
-  const destNext = params.get("next") ?? "";
+  const tujuanAman = safeNext(params.get("next"));
   const [email, setEmail] = useState("");
   const [pesan, setPesan] = useState("");
 
   async function loginEmail(e: React.FormEvent) {
     e.preventDefault();
     const supabase = createClient();
-    const redirect = destNext
-      ? `${window.location.origin}/auth/callback?next=${encodeURIComponent(destNext)}`
-      : `${window.location.origin}/auth/callback`;
+    const redirect =
+      tujuanAman !== "/"
+        ? `${window.location.origin}/auth/callback?next=${encodeURIComponent(tujuanAman)}`
+        : `${window.location.origin}/auth/callback`;
     const { error, data } = await supabase.auth.signInWithOtp({
       email,
       options: { emailRedirectTo: redirect },
     });
     if (error) setPesan("Gagal kirim link masuk, coba lagi ya");
-    else if (data.session) router.push(destNext || "/");
+    else if (data.session) router.push(tujuanAman);
     else setPesan("Cek email kamu, link masuk udah dikirim.");
   }
 
   async function loginGoogle() {
     const supabase = createClient();
-    const redirect = destNext
-      ? `${window.location.origin}/auth/callback?next=${encodeURIComponent(destNext)}`
-      : `${window.location.origin}/auth/callback`;
+    const redirect =
+      tujuanAman !== "/"
+        ? `${window.location.origin}/auth/callback?next=${encodeURIComponent(tujuanAman)}`
+        : `${window.location.origin}/auth/callback`;
     // Supabase mengarahkan browser ke provider; callback yang meneruskan ke `next`.
     await supabase.auth.signInWithOAuth({
       provider: "google",
