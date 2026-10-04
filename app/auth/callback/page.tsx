@@ -31,6 +31,26 @@ export default function AuthCallbackPage() {
 
       const code = params.get("code");
       if (code) {
+        // @supabase/ssr createBrowserClient sets detectSessionInUrl:true, so it
+        // auto-exchanges ?code= on load. Blindly exchanging again reuses the code
+        // → "used-code" error even though a session already exists. So: reuse an
+        // existing session, otherwise give auto-detect a brief chance, and only
+        // exchange manually if there is still no session.
+        const sesiAwal = await supabase.auth.getSession();
+        if (sesiAwal.data.session) {
+          router.replace(next);
+          return;
+        }
+
+        // Satu percobaan singkat: tunggu auto-detect menyelesaikan exchange.
+        await new Promise((r) => setTimeout(r, 400));
+        const sesiTunda = await supabase.auth.getSession();
+        if (sesiTunda.data.session) {
+          router.replace(next);
+          return;
+        }
+
+        // Auto-detect tidak menghasilkan sesi — lakukan exchange manual.
         const { error } = await supabase.auth.exchangeCodeForSession(code);
         if (error) return gagal("Gagal masuk, coba kirim link lagi ya.");
         router.replace(next);
@@ -53,8 +73,14 @@ export default function AuthCallbackPage() {
         return;
       }
 
-      // Tidak ada code/token: langsung ke tujuan (mis. user buka /auth/callback manual).
-      router.replace(next);
+      // Tidak ada code/token: kalau sudah punya sesi lanjut ke tujuan; kalau tidak,
+      // tampilkan pesan berbeda dari kegagalan exchange (bukan silent redirect).
+      const sesiAkhir = await supabase.auth.getSession();
+      if (sesiAkhir.data.session) {
+        router.replace(next);
+        return;
+      }
+      return gagal("Link masuk nggak lengkap atau udah dipakai.");
     }
 
     jalan();
