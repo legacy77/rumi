@@ -1,0 +1,1 @@
+create policy "pembuat jadi admin" on memberships for insert with check (user_id = auth.uid() and exists (select 1 from households h where h.id = memberships.household_id and h.created_by = auth.uid()));

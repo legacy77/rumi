@@ -1,11 +1,9 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const supabase = createClient();
-  const router = useRouter();
   const [email, setEmail] = useState("");
 
   async function loginEmail(e: React.FormEvent) {
@@ -14,8 +12,10 @@ export default function LoginPage() {
   }
 
   async function loginGoogle() {
-    await supabase.auth.signInWithOAuth({ provider: "google" });
-    router.push("/");
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
+    });
   }
 
   return (
