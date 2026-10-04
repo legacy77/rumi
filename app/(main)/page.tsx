@@ -242,6 +242,12 @@ export default function Dashboard({ urgent = null, counts = null }: any) {
           <h2>Agenda hari ini</h2>
           <p>{angka("jadwal")} agenda</p>
         </a>
+        <a href="/pengingat">
+          <h2>Pengingat hari ini</h2>
+        </a>
+        <a href="/keluarga">
+          <h2>Anggota keluarga</h2>
+        </a>
       </section>
       {gagalMuat && <p>Gagal memuat ringkasan, coba lagi ya</p>}
     </div>

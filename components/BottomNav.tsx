@@ -6,7 +6,7 @@ export default function BottomNav() {
   return (
     <>
       {buka && (
-        <div role="dialog" aria-label="Tambah baru">
+        <div role="dialog" aria-label="Menu semua">
           <a href="/tugas">Tugas</a>
           <a href="/belanja">Belanja</a>
           <a href="/tagihan">Tagihan</a>
@@ -18,6 +18,7 @@ export default function BottomNav() {
       <nav aria-label="Navigasi utama">
         <a href="/">Beranda</a>
         <a href="/tugas">Tugas</a>
+        <a href="/pengingat">Pengingat</a>
         <button aria-label="Tambah" onClick={() => setBuka((v) => !v)}>
           +
         </button>

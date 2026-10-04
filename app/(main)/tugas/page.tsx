@@ -13,6 +13,8 @@ export default function TugasPage({ tugasAwal = [], userId: userIdProp }: any) {
   const [filter, setFilter] = useState<Filter>("milikku");
   const [pendingSync, setPendingSync] = useState<string[]>([]);
   const [gagalMuat, setGagalMuat] = useState(false);
+  const [judulBaru, setJudulBaru] = useState("");
+  const [pesanTambah, setPesanTambah] = useState("");
 
   useEffect(() => {
     if (tugasAwal.length > 0 || !householdId) return;
@@ -68,9 +70,35 @@ export default function TugasPage({ tugasAwal = [], userId: userIdProp }: any) {
     }
   }
 
+  async function tambah() {
+    const judul = judulBaru.trim();
+    if (!judul) {
+      setPesanTambah("Judul tugas wajib diisi");
+      return;
+    }
+    setPesanTambah("");
+    const res = await fetch("/api/tasks", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ household_id: householdId, judul }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      setPesanTambah(data.error ?? "Gagal bikin tugas, coba lagi ya");
+      return;
+    }
+    setTugas((semua) => [data, ...semua]);
+    setJudulBaru("");
+  }
+
   return (
     <div>
       <h1>Tugas</h1>
+      <div>
+        <input placeholder="Judul tugas" value={judulBaru} onChange={(e) => setJudulBaru(e.target.value)} />
+        <button onClick={tambah}>Tambah tugas</button>
+      </div>
+      {pesanTambah && <p>{pesanTambah}</p>}
       <div>
         <button onClick={() => setFilter("milikku")}>Milikku</button>
         <button onClick={() => setFilter("hariIni")}>Hari ini</button>
