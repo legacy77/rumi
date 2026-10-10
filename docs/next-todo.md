@@ -1,10 +1,10 @@
 # RUMI — Next Todo (dari gap Koabit)
 
-> Status 10 Okt 2026: **T1–T4 selesai di kode, menunggu keputusan review.**
+> Status 10 Okt 2026: **T1–T4 selesai, migrasi ter-apply, sudah di-push.**
 > Test 66/66 hijau, `tsc` bersih, `next build` sukses (incl. `/api/profile`).
-> BELUM di-apply ke DB: `0006_tasks_recurrence.sql`, `0007_profiles.sql`
-> → tempel manual di Supabase SQL Editor sebelum deploy, urut 0006 lalu 0007.
-> Belum commit, belum push.
+> Migrasi `0006_tasks_recurrence.sql` + `0007_profiles.sql` **sudah di-apply**
+> manual via Supabase SQL Editor (verified: kolom `pengulangan`/`induk_id` ada, tabel `profiles` ada).
+> Commit `57f39dd` (fitur) + `fff3dee` (chore) sudah di-push ke `main`.
 
 Urutan: quick-win dulu, migrasi DB belakangan. Tanpa gamifikasi/AI/mood.
 
