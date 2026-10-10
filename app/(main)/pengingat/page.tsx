@@ -20,16 +20,39 @@ function tanggalDari(v: unknown): string | null {
   return tanggalLokal(t);
 }
 
+function namaBerkas(namaFile: string) {
+  const bersih = (namaFile || "pengingat").replace(/[\\/:*?"<>|]+/g, "-").trim();
+  return (bersih || "pengingat").endsWith(".ics") ? bersih : `${bersih || "pengingat"}.ics`;
+}
+
 function unduhICS(namaFile: string, isi: string) {
-  const blob = new Blob([isi], { type: "text/calendar" });
+  const blob = new Blob([isi], { type: "text/calendar;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = namaFile.endsWith(".ics") ? namaFile : `${namaFile}.ics`;
+  a.download = namaBerkas(namaFile);
   document.body.appendChild(a);
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
+}
+
+// Share-first: lempar .ics ke share sheet OS → iOS/Android buka "Tambah ke Kalender".
+// Fallback ke unduh bila Web Share file tak didukung, dibatalkan, atau gagal.
+async function tambahKeKalender(namaFile: string, isi: string) {
+  const nama = namaBerkas(namaFile);
+  try {
+    const file = new File([isi], nama, { type: "text/calendar" });
+    const nav: any = typeof navigator !== "undefined" ? navigator : null;
+    if (nav?.canShare?.({ files: [file] }) && nav?.share) {
+      await nav.share({ files: [file], title: nama, text: "Tambah ke kalender HP" });
+      return;
+    }
+  } catch (err: any) {
+    // User membatalkan share (AbortError) → jangan unduh paksa.
+    if (err?.name === "AbortError") return;
+  }
+  unduhICS(nama, isi);
 }
 
 function waktuKalender(tanggal: string) {
@@ -140,19 +163,19 @@ export default function PengingatPage({ awal = null }: any) {
   function kalenderTugas(t: any) {
     const d = tanggalDari(t.deadline) ?? hariIni;
     const w = waktuKalender(d);
-    unduhICS(t.judul, toICS({ judul: t.judul, mulai: w.mulai, selesai: w.selesai }));
+    tambahKeKalender(t.judul, toICS({ judul: t.judul, mulai: w.mulai, selesai: w.selesai, uid: `tugas-${t.id}` }));
   }
 
   function kalenderTagihan(b: any) {
     const d = tanggalDari(b.jatuh_tempo) ?? hariIni;
     const w = waktuKalender(d);
-    unduhICS(b.nama, toICS({ judul: `Bayar ${b.nama}`, mulai: w.mulai, selesai: w.selesai }));
+    tambahKeKalender(b.nama, toICS({ judul: `Bayar ${b.nama}`, mulai: w.mulai, selesai: w.selesai, uid: `tagihan-${b.id}` }));
   }
 
   function kalenderJadwal(j: any) {
     const mulai = typeof j.mulai === "string" ? j.mulai : hariIni;
     const selesai = typeof j.selesai === "string" && j.selesai.trim() !== "" ? j.selesai : mulai;
-    unduhICS(j.judul, toICS({ judul: j.judul, mulai, selesai }));
+    tambahKeKalender(j.judul, toICS({ judul: j.judul, mulai, selesai, uid: `jadwal-${j.id}` }));
   }
 
   if (memuat && !gagalMuat) {
