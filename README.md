@@ -19,7 +19,7 @@
 - 🛒 **Belanja** — daftar belanjaan rumah, tandai yang udah dibeli, hapus yang dibeli sekaligus.
 - 💸 **Tagihan** — catat yang wajib dibayar, lunasi yang mendesak. Jatuh tempo H-3 langsung kelihatan.
 - 📅 **Jadwal** — agenda rumah biar nggak tabrakan. Bisa ekspor ke kalender (.ics).
-- 🔔 **Pengingat** — yang jatuh tempo hari ini dan yang kelewat, dikumpulin satu tempat.
+- 🔔 **Pengingat** — yang jatuh tempo hari ini dan yang kelewat, dikumpulin satu tempat. Item bisa dibagikan sebagai `.ics` lewat share sheet HP untuk ditambahkan ke kalender (atau diunduh bila browser tidak mendukung).
 - 👨‍👩‍👧 **Keluarga** — satu rumah satu tim. Undang anggota lewat link, ganti-ganti rumah gampang.
 - 🏠 **Beranda** — ringkasan harian: apa yang urgent, apa yang bisa santai.
 

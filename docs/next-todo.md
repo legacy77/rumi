@@ -5,6 +5,12 @@
 > Migrasi `0006_tasks_recurrence.sql` + `0007_profiles.sql` **sudah di-apply**
 > manual via Supabase SQL Editor (verified: kolom `pengulangan`/`induk_id` ada, tabel `profiles` ada).
 > Commit `57f39dd` (fitur) + `fff3dee` (chore) sudah di-push ke `main`.
+>
+> **Tambahan (commit `e37ce36`, sudah live):** "Tambah ke Kalender HP" di
+> `/pengingat` kini pakai Web Share sheet native untuk bagikan `.ics` (fallback
+> unduh bila tak didukung). `lib/ics.ts` diperkuat: escape RFC 5545, `UID`
+> unik, `DTSTAMP`, `PRODID`, waktu lokal floating. Test 70/70.
+> Verified live di prod: chunk memuat `canShare`/`PRODID`/`DTSTAMP`.
 
 Urutan: quick-win dulu, migrasi DB belakangan. Tanpa gamifikasi/AI/mood.
 

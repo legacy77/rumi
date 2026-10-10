@@ -1,14 +1,22 @@
-# RUMI — Handoff (2026-10-10, sesi terakhir 87ef6b9)
+# RUMI — Handoff (2026-10-10, sesi terakhir e37ce36)
 
 ## Ringkas buat sesi berikutnya
-**T1–T4 SELESAI & ter-push. Migrasi 0006+0007 sudah ter-apply. Berikutnya: T5 → T6.**
-Baca `docs/next-todo.md` (status ter-update) untuk detail. Rencana besar: SaaS per-rumah, freemium (lihat `docs/market-research-pricing.md`, `docs/gap-koabit-rumi.md`).
+**T1–T4 SELESAI & ter-push. Migrasi 0006+0007 sudah ter-apply. Tambahan:
+fitur "Tambah ke Kalender HP" (Web Share .ics) SELESAI & LIVE.**
+Baca `docs/next-todo.md` untuk detail. Rencana besar: SaaS per-rumah, freemium (lihat `docs/market-research-pricing.md`, `docs/gap-koabit-rumi.md`).
 
 ## Status
-- Branch `main`, working tree bersih, `origin/main` = `87ef6b9`.
+- Branch `main`; fitur terakhir di commit `e37ce36` (lihat `git status` / `git log` untuk posisi terkini).
 - Commits sesi ini: `57f39dd` (T1–T4 fitur + migrasi), `fff3dee` (gitignore supabase/.temp), `87ef6b9` (doc status).
-- Verifikasi: **vitest 66/66, `tsc` exit 0, `next build` 23/23** (route baru `/api/profile`).
+- Verifikasi: **vitest 70/70, `tsc` exit 0, `next build` 23/23** (route baru `/api/profile`).
 - Vercel auto-deploy dari `main` (prod `https://rumi-chi-tan.vercel.app`).
+
+## Sesi lanjutan (10 Okt): "Tambah ke Kalender HP" (commit `e37ce36`, LIVE)
+- Tombol `/pengingat` kini share-first: `navigator.share({files:[.ics]})` → OS buka sheet "Tambah ke Kalender"; fallback unduh bila tak didukung / gagal (AbortError dibatalkan saja, tanpa unduh paksa).
+- `lib/ics.ts`: escape RFC 5545 (`\, \; \n \\`), `UID:rumi-<id>@rumi`, `DTSTAMP`, `PRODID:-//RUMI//Pengingat Rumah//ID`, waktu lokal floating (tanpa Z).
+- Test: `tests/ui/reminder.test.ts` (escape/UID/floating) + `tests/ui/pengingat-kalender.test.tsx` (share-dipanggil / fallback-unduh). 70/70 hijau.
+- Verified live: chunk prod `page-77c396beb8fe0fed.js` memuat `canShare`/`PRODID`/`DTSTAMP`.
+- Tanpa dep baru, tanpa migrasi, tanpa API baru.
 
 ## Yang selesai sesi ini
 - **T1** Tugas edit (judul/deskripsi/deadline/prioritas) + hapus confirm.
