@@ -1,3 +1,49 @@
+# RUMI — Handoff (2026-10-10, sesi terakhir 87ef6b9)
+
+## Ringkas buat sesi berikutnya
+**T1–T4 SELESAI & ter-push. Migrasi 0006+0007 sudah ter-apply. Berikutnya: T5 → T6.**
+Baca `docs/next-todo.md` (status ter-update) untuk detail. Rencana besar: SaaS per-rumah, freemium (lihat `docs/market-research-pricing.md`, `docs/gap-koabit-rumi.md`).
+
+## Status
+- Branch `main`, working tree bersih, `origin/main` = `87ef6b9`.
+- Commits sesi ini: `57f39dd` (T1–T4 fitur + migrasi), `fff3dee` (gitignore supabase/.temp), `87ef6b9` (doc status).
+- Verifikasi: **vitest 66/66, `tsc` exit 0, `next build` 23/23** (route baru `/api/profile`).
+- Vercel auto-deploy dari `main` (prod `https://rumi-chi-tan.vercel.app`).
+
+## Yang selesai sesi ini
+- **T1** Tugas edit (judul/deskripsi/deadline/prioritas) + hapus confirm.
+- **T2** Tugas berulang harian/mingguan/bulanan; lazy-generate saat `done`; badge baris; guard anti-duplikat (unique index `uq_tasks_induk_deadline`).
+- **T3** Nama anggota (bukan UUID; `profiles` + fallback prefix email), ganti role (admin), keluar rumah, editor "Nama kamu".
+- **T4** Belanja jumlah/catatan, riwayat "Sudah dibeli" + "Beli lagi", favorit "Sering dibeli".
+- Migrasi: `supabase/migrations/0006_tasks_recurrence.sql`, `0007_profiles.sql` — **ter-apply manual** di project `orucqwwgygevqctuqfjs` (verified: kolom `pengulangan`/`induk_id` ada; tabel `profiles` ada).
+
+## Temuan review yang sudah diperbaiki
+Insert recurrence dicek error; instance baru muncul tanpa reload; bulanan clamp (31 Jan → 28/29 Feb); tanggal pakai `Asia/Jakarta`; guard duplikat unique index + tangani 23505; POST validasi deadline/prioritas; test mock belanja diperbaiki.
+
+## Perlu smoke test prod (belum diverifikasi user)
+1. Tugas: tambah berulang harian → selesaikan → instance besok muncul tanpa reload.
+2. Tugas: edit judul/prioritas; hapus (confirm).
+3. Keluarga: nama tampil; admin ubah role; member keluar rumah.
+4. Belanja: tambah jumlah/catatan; "Sudah dibeli"/"Beli lagi"/"Sering dibeli".
+
+## Keputusan tertunda (bawa ke user)
+- Status code tak seragam: PATCH turunkan admin-terakhir `403`, POST keluar admin-terakhir `400` (test kunci 403 di PATCH). Seragamkan?
+- `avatar_url` ditulis di spec T3 tapi sengaja tidak diimplement (YAGNI).
+- Race concurrent recurrence penuh: unique index menangani kasus umum, bukan transaksi penuh.
+
+## Berikutnya (urut)
+- **T5 — Jadwal pengulangan + impor ICS** [migrasi 0008]. `schedules.pengulangan` + `rrule`; dropdown+badge; impor `.ics` client-side + POST bulk. Lihat `docs/next-todo.md`.
+- **T6 — Kalender bersama** (depend T3+T5). `app/(main)/kalender/page.tsx` gabung schedules+tasks(deadline)+bills(jatuh_tempo), filter per anggota, ekspor `.ics`.
+
+## Catatan lingkungan (penting)
+- **PowerShell 5**: `npm.ps1`/`npx.ps1` diblokir ExecutionPolicy → jalankan via `cmd /c "..."`. `&&` tidak valid → pakai `;` + cek `$LASTEXITCODE`.
+- `psql` ada di `C:\Program Files\PostgreSQL\16\bin\psql.exe`.
+- CLI Supabase: `npx supabase` v2.120.0, **belum login**, tanpa `SUPABASE_ACCESS_TOKEN`.
+- `.env.local` isi: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (**format baru `sb_secret_`**, tak bisa DDL). **Tidak ada `DATABASE_URL`** → apply migrasi via SQL Editor manual (paste ISI file, bukan nama file).
+- Login: magic-link email + Google OAuth (dua-duanya jalan).
+
+---
+
 # RUMI — Handoff (2026-10-04, sesi terakhir c509e38)
 
 ## Status
