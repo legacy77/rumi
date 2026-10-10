@@ -22,3 +22,6 @@ next-env.d.ts
 
 # agent scratch (design notes, review packages — not app code)
 .superpowers/
+
+# supabase cli scratch (local temp marker — not app code)
+supabase/.temp/
